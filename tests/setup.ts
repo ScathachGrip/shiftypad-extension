@@ -30,7 +30,9 @@ const mock = {
       setTimeout(() => {
         listeners.forEach(fn => {
           try {
-            fn(msg, {}, cb);
+            // Only call cb if it's a function to prevent CI failures
+            const sendResponse = typeof cb === "function" ? cb : () => {};
+            fn(msg, {}, sendResponse);
           } catch (e) {}
         });
       }, 0);

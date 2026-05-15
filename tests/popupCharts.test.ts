@@ -54,9 +54,10 @@ describe("Chart Rendering Logic", () => {
     const querySpy = spyOn((globalThis as any).chrome.tabs, "query").mockImplementation((_q: any, cb: (tabs: any[]) => void) => {
       cb([{ id: 1, url: "http://example.com" }]);
     });
-    const sendSpy = spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: number, msg: any, cb: (res: any) => void) => {
-      // @ts-ignore
-      cb({ damageData: [{ player: "Player1", synchro: 200, rows: [{ boss: "H.S.T.A.", damage: 500000 }] }] });
+    const sendSpy = spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: number, msg: any, cb?: (res: any) => void) => {
+      if (typeof cb === "function") {
+        cb({ damageData: [{ player: "Player1", synchro: 200, rows: [{ boss: "H.S.T.A.", damage: 500000 }] }] });
+      }
     });
 
     PopupCharts.renderChartBoss(mockState);
