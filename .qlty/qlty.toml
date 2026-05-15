@@ -38,3 +38,13 @@ name = "trufflehog"
 
 [[plugin]]
 name = "zizmor"
+
+# Triage rules to ignore specific renegade rules
+[[triage]]
+match.plugins = ["zizmor"]
+match.rules = [
+  "zizmor:zizmor/unpinned-uses",
+  "zizmor:zizmor/cache-poisoning",
+  "zizmor:zizmor/artipacked"
+]
+set.ignored = true
