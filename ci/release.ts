@@ -17,7 +17,7 @@ if (!existsSync(distPath)) {
   process.exit(1);
 }
 
-console.log("📦 Creating release ZIP (matching stable structure)...");
+console.log("Creating release ZIP (matching stable structure)...");
 
 const entries: Record<string, Uint8Array> = {};
 
@@ -64,4 +64,4 @@ for await (const rel of distGlob.scan({ cwd: distPath })) {
 const outPath = join(root, `${pkg.name}.zip`);
 await Bun.write(outPath, zipSync(entries));
 
-console.log(`✨ RELEASE CREATED: ${outPath}`);
+console.log(`RELEASE CREATED: ${outPath}`);

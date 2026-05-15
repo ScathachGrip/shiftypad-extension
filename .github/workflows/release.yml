@@ -27,10 +27,10 @@ jobs:
         id: meta
         shell: bash
         run: |
-          VERSION="$(jq -r .version package.json)"
+          VERSION_NAME="$(jq -r .version_name manifest.json)"
           NAME="$(jq -r .name package.json)"
-          TAG="v${VERSION}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          TAG="${VERSION_NAME}"
+          echo "version=${VERSION_NAME}" >> "$GITHUB_OUTPUT"
           echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
           echo "zip=${NAME}.zip" >> "$GITHUB_OUTPUT"
 
@@ -54,6 +54,8 @@ jobs:
         if: steps.tag_check.outputs.exists == 'false'
         run: |
           bun install
+          bun run lint
+          bun run test
           bun run clean:build
 
       - name: Generate Release Notes

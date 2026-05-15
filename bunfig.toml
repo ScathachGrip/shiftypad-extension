@@ -1,0 +1,16 @@
+[test]
+# Global setup for DOM environment
+preload = ["./tests/setup.ts"]
+
+# Only measure coverage for the actual extension source code
+coverageInclude = ["src/**"]
+
+# Exclude build tools, release scripts, and existing manual tests
+coverageExclude = [
+  "ci/**",
+  "tests/**",
+  "dist/**",
+  "node_modules/**",
+  "src/**/*.test.ts",
+  "src/**/*.spec.ts"
+]

@@ -1,4 +1,4 @@
-name: Lint
+name: CI
 
 on:
   push:
@@ -10,7 +10,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -27,3 +27,12 @@ jobs:
 
       - name: Check lint
         run: bun run lint
+
+      - name: Run tests with coverage
+        run: bun run test:coverage
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          files: ./coverage/lcov.info
+          fail_ci_if_error: false
