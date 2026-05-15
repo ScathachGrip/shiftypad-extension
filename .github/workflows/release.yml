@@ -1,0 +1,109 @@
+name: Release
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set release metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION="$(jq -r .version package.json)"
+          NAME="$(jq -r .name package.json)"
+          TAG="v${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "zip=${NAME}.zip" >> "$GITHUB_OUTPUT"
+
+      - name: Check if tag already exists
+        id: tag_check
+        shell: bash
+        run: |
+          if git ls-remote --tags origin "refs/tags/${{ steps.meta.outputs.tag }}" | grep -q "${{ steps.meta.outputs.tag }}"; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Bun
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: oven-sh/setup-bun@f4d14e03ff726c06358e5557344e1da148b56cf7
+        with:
+          bun-version: latest
+
+      - name: Build and Package
+        if: steps.tag_check.outputs.exists == 'false'
+        run: |
+          bun install
+          bun run clean:build
+
+      - name: Generate Release Notes
+        if: steps.tag_check.outputs.exists == 'false'
+        id: changelog
+        run: |
+          # Fetch all tags first to ensure we have them
+          git fetch --tags
+          # Find the latest tag in history before current HEAD
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          REPO_URL="${{ github.server_url }}/${{ github.repository }}"
+          
+          if [ -z "$PREV_TAG" ]; then
+            NOTES=$(git log --pretty=format:"* %s ([%h]($REPO_URL/commit/%H))" --no-merges)
+            COMPARE_URL="$REPO_URL/commit/HEAD"
+          else
+            NOTES=$(git log --pretty=format:"* %s ([%h]($REPO_URL/commit/%H))" $PREV_TAG..HEAD --no-merges)
+            COMPARE_URL="$REPO_URL/compare/$PREV_TAG...${{ steps.meta.outputs.tag }}"
+          fi
+          
+          echo "notes<<EOF" >> $GITHUB_OUTPUT
+          echo "$NOTES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "prev_tag=$PREV_TAG" >> $GITHUB_OUTPUT
+          echo "compare_url=$COMPARE_URL" >> $GITHUB_OUTPUT
+
+      - name: Create tag
+        if: steps.tag_check.outputs.exists == 'false'
+        run: |
+          git tag ${{ steps.meta.outputs.tag }}
+          git push origin ${{ steps.meta.outputs.tag }}
+
+      - name: Create GitHub release
+        if: steps.tag_check.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.meta.outputs.tag }}
+          name: ${{ steps.meta.outputs.tag }}
+          body: |
+            ## What's Changed
+            ${{ steps.changelog.outputs.notes }}
+            
+            **Full Changelog**: ${{ steps.changelog.outputs.compare_url }}
+          target_commitish: master
+          generate_release_notes: false
+          make_latest: true
+          files: ${{ steps.meta.outputs.zip }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Skip release when tag exists
+        if: steps.tag_check.outputs.exists == 'true'
+        run: echo "Tag ${{ steps.meta.outputs.tag }} already exists. Skipping release creation."
