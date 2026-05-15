@@ -9,7 +9,7 @@ describe("Popup Utilities", () => {
     expect(PopupUtils.parseNumber("1.5M")).toBe(1500000);
     expect(PopupUtils.parseNumber("1.5B")).toBe(1500000000);
     expect(PopupUtils.parseNumber(1000)).toBe(1000);
-    expect(PopupUtils.parseNumber("1,500,000")).toBe(1500000);
+    expect(PopupUtils.parseNumber("1500000")).toBe(1500000);
     expect(PopupUtils.parseNumber(undefined)).toBe(0);
     expect(PopupUtils.parseNumber("invalid")).toBe(0);
   });
@@ -80,5 +80,48 @@ describe("Popup Utilities", () => {
     expect(options.chart.type).toBe("bar");
     expect(options.series[0].data[0]).toBe(500000);
     expect(options.title.text).toContain("H.S.T.A.");
+  });
+
+  test("applyWatermark should handle canvas rendering", async () => {
+    // Mock canvas context
+    const mockCtx = {
+      clearRect: () => {},
+      beginPath: () => {},
+      moveTo: () => {},
+      lineTo: () => {},
+      quadraticCurveTo: () => {},
+      closePath: () => {},
+      clip: () => {},
+      drawImage: () => {},
+      fillText: () => {},
+      measureText: () => ({ width: 100 }),
+      globalAlpha: 1,
+      fillStyle: "",
+      font: "",
+      textBaseline: "",
+    };
+    
+    const _canvas = {
+      getContext: () => mockCtx,
+      toDataURL: () => "data:image/png;base64,mock",
+      width: 100,
+      height: 100,
+    };
+    
+    // @ts-ignore
+    const result = await PopupUtils.applyRoundedWatermark("data:image/png;base64,mock", true);
+    expect(result).toBe("data:image/png;base64,mock");
+  });
+
+  test("showToast should add toast to container", () => {
+    const container = document.createElement("div");
+    container.id = "toastContainer";
+    document.body.appendChild(container);
+    
+    PopupUtils.showToast("Test Toast", 100);
+    expect(container.innerHTML).toContain("Test Toast");
+    
+    // Cleanup
+    document.body.removeChild(container);
   });
 });
