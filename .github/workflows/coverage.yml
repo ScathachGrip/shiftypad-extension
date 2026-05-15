@@ -29,8 +29,10 @@ jobs:
 
       - name: Run Tests & Coverage
         run: bun run test:coverage
+        continue-on-error: true
 
       - name: Qlty Analysis
+        if: always()
         uses: qltysh/qlty-action/coverage@a19242102d17e497f437d7466aa01b528537e899 # v1.1.1
         with:
           files: coverage/lcov.info

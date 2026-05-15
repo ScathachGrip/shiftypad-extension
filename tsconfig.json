@@ -13,7 +13,8 @@
     "isolatedModules": true,
     "noEmit": true,
     "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "types": ["bun", "chrome", "jsdom"]
+    "types": ["bun", "chrome", "jsdom"],
+    "jsx": "react-jsx"
   },
   "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "ci/**/*.ts"]
 }

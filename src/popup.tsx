@@ -652,7 +652,7 @@ const POPUP_HTML = `
       <h4>Why</h4>
       <p>
       Synchro is a proxy for power. Higher synchro normally means higher damage. The linear fit captures the <strong>average</strong> damage at each synchro level.
-      Residuals measure <strong>who beats the average the most</strong>, which is the intended definition of efficiency. <a href="https://github.com/ScathachGrip/shiftypad-extension/blob/master/EFFICIENCY-CHECK.md" target="_blank" rel="noreferrer noopener">Read more</a>
+      Residuals measure <strong>who beats the average the most</strong>, which is the intended definition of efficiency. <a href="https://github.com/ScathachGrip/shiftypad-extension/tree/master/tests#efficiency-check" target="_blank" rel="noreferrer noopener">Read more</a>
       </p>
     </div>
   </div>
