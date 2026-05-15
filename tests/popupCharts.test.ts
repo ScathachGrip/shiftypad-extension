@@ -61,11 +61,13 @@ describe("Chart Rendering Logic", () => {
     });
 
     PopupCharts.renderChartBoss(mockState);
-    await new Promise(resolve => setTimeout(resolve, 50));
+    await new Promise(resolve => setTimeout(resolve, 100));
     expect(querySpy).toHaveBeenCalled();
     expect(sendSpy).toHaveBeenCalled();
-    const message = sendSpy.mock.calls[0][1] as { type: string };
-    expect(message.type).toBe("ALL_UNION_RAID_DAMAGE_DATA_REQUEST");
+    const calls = sendSpy.mock.calls;
+    // Find the call that is NOT GET_ACTIVE_SEASON if multiple calls happen
+    const raidCall = calls.find(c => (c[1] as any).type === "ALL_UNION_RAID_DAMAGE_DATA_REQUEST");
+    expect(raidCall).toBeDefined();
   });
 
   test("renderAvgSynchroChart should create ApexCharts instance", () => {

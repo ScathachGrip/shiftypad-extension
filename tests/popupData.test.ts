@@ -125,10 +125,12 @@ describe("Popup Data Logic", () => {
     const rSpy = spyOn((globalThis as any).chrome.tabs, "reload").mockImplementation(() => {});
 
     (globalThis as any).chrome.runtime.lastError = { message: "error" };
-    const sendSpy = spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb: (r: unknown) => void) => {
+    const sendSpy = spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb?: (r: unknown) => void) => {
       const m = msg as { type: string };
-      if (m.type === "GET_ACTIVE_SEASON") { cb({ seasonKey: "S21" }); }
-      else { cb(null); }
+      if (cb) {
+        if (m.type === "GET_ACTIVE_SEASON") { cb({ seasonKey: "S21" }); }
+        else { cb(null); }
+      }
     });
 
     loadMembers(mockState, "S21");
@@ -147,10 +149,12 @@ describe("Popup Data Logic", () => {
   test("loadMembers should show empty state when no records found", async () => {
     spyOn((globalThis as any).chrome.tabs, "query").mockImplementation((_q: unknown, cb: (tabs: {id: number; url: string}[]) => void) => cb([{ id: 1, url: "https://www.blablalink.com/shiftyspad/union-raid" }]));
     spyOn((globalThis as any).chrome.storage.local, "get").mockImplementation((_keys: unknown, cb: (r: Record<string, unknown>) => void) => cb({}));
-    spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb: (r: unknown) => void) => {
+    spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb?: (r: unknown) => void) => {
       const m = msg as { type: string };
-      if (m.type === "GET_ACTIVE_SEASON") { cb({ seasonKey: "S21" }); }
-      else { cb({ union: "Test", data: [], seasonKey: "S21", seasonText: "S21" }); }
+      if (typeof cb === "function") {
+        if (m.type === "GET_ACTIVE_SEASON") { cb({ seasonKey: "S21" }); }
+        else { cb({ union: "Test", data: [], seasonKey: "S21", seasonText: "S21" }); }
+      }
     });
 
     loadMembers(mockState, "S21");
