@@ -82,8 +82,7 @@ export function getCacheKeyFromUrl(url: string): string {
 export function parseNumber(val: string | number | undefined): number {
   if (typeof val === "number") {return val;}
   if (!val) {return 0;}
-  const cleanVal = val.toString().replace(/,/g, "");
-  const match = cleanVal.match(/([\d.]+)([KMB]?)/i);
+  const match = val.match(/([\d.]+)([KMB]?)/i);
   if (!match) {return 0;}
   const [, numStr, suffix] = match;
   let num = parseFloat(numStr);

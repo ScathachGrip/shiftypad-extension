@@ -18,7 +18,7 @@ installLogForwarder("Content");
 /**
  * Class that handles Union Raid scraping, caching, and UI injection.
  */
-export class UnionRaidScraper {
+class UnionRaidScraper {
   private cached: MemberRow[] | null = null;
   private isScrapingInProgress = false;
   private isStopRequested = false;
@@ -475,10 +475,10 @@ export class UnionRaidScraper {
     this.isScrapingInProgress = true;
     this.setScrapeButtonState("busy");
     this.showScrapeBlocker();
-
+    
     let liveSeasonText = getCurrentSeasonText();
     let liveSeasonKey = seasonTextToKey(liveSeasonText);
-
+    
     // Last resort: if still empty and not locked, try to wait a tiny bit
     if (!liveSeasonKey && !this.manualSeasonLocked) {
       console.log("[Scraping] Season missing, waiting for DOM...");
@@ -502,11 +502,11 @@ export class UnionRaidScraper {
       return;
     }
 
-    console.log("🟢 SCRAPE START", {
-      targetKey: targetSeasonKey,
-      targetText: targetSeasonText,
+    console.log("🟢 SCRAPE START", { 
+      targetKey: targetSeasonKey, 
+      targetText: targetSeasonText, 
       liveKey: liveSeasonKey,
-      locked: this.manualSeasonLocked
+      locked: this.manualSeasonLocked 
     });
 
     try {
@@ -611,6 +611,10 @@ export class UnionRaidScraper {
 
   /**
    * Sets the scrape button animation state.
+   *
+   * @private
+   * @param {"idle" | "busy"} state
+   * @returns {void}
    */
   private setScrapeButtonState(state: "idle" | "busy"): void {
     if (!this.scrapeIconEl) { return; }
@@ -620,7 +624,11 @@ export class UnionRaidScraper {
 
   /**
    * Shows the scrape blocker overlay.
+   *
+   * @private
+   * @returns {void}
    */
+
   private showScrapeBlocker(): void {
     if (this.scrapeBlockerEl) { return; }
     const blocker = document.createElement("div");
@@ -636,6 +644,12 @@ export class UnionRaidScraper {
     document.body.appendChild(blocker);
   }
 
+  /**
+   * Hides the scrape blocker overlay.
+   *
+   * @private
+   * @returns {void}
+   */
   private hideScrapeBlocker(): void {
     if (!this.scrapeBlockerEl) { return; }
     this.scrapeBlockerEl.remove();
