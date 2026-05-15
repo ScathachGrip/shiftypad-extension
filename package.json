@@ -1,0 +1,35 @@
+{
+  "name": "shiftypad-extension",
+  "version": "11.0.2",
+  "description": "blablalink.com extension",
+  "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
+  "engines": {
+    "bun": ">=1.3.13"
+  },
+  "packageManager": "bun@1.3.13",
+  "scripts": {
+    "clean": "rm -rf dist",
+    "download:apex": "bun ci/downloadApex.ts",
+    "build": "bun ci/build.ts",
+    "release": "bun ci/release.ts",
+    "clean:build": "bun run clean && bun run build && bun run release",
+    "lint": "tsc --noEmit && eslint \"src/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" --fix"
+  },
+  "keywords": [],
+  "author": "sinkaroid",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ScathachGrip/shiftypad-extension.git"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@types/bun": "^1.3.13",
+    "@types/chrome": "^0.0.254",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.39.4",
+    "fflate": "^0.8.2",
+    "typescript": "^6.0.3"
+  }
+}
