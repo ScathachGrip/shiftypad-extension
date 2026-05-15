@@ -2,14 +2,18 @@
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "outDir": "./dist",
-    "rootDir": "./",
+    "moduleResolution": "Bundler",
     "strict": true,
-    "esModuleInterop": true,
-    "moduleResolution": "bundler",
-    "types": ["@types/bun", "chrome"],
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "types": ["bun", "chrome", "jsdom"]
   },
-  "include": ["src/**/*", "ci/**/*"]
+  "include": ["src/**/*.ts", "src/**/*.tsx", "tests/**/*.ts", "ci/**/*.ts"]
 }
