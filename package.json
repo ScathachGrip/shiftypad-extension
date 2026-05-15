@@ -1,6 +1,6 @@
 {
   "name": "shiftypad-extension",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "description": "Analytics extension for Blablalink Union Raid management.",
   "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
   "engines": {
@@ -21,7 +21,7 @@
     "blablalink:version": "bun ci/checkVersion.ts",
     "test:efficiency": "bun tests/efficiency-check.ts",
     "test": "bun test",
-    "test:coverage": "bun test --coverage --coverage-reporter=lcov --coverage-reporter=text"
+    "test:coverage": "rm -rf coverage && bun test --coverage --coverage-reporter=lcov --coverage-reporter=text"
   },
   "keywords": [],
   "author": "sinkaroid",
