@@ -3,19 +3,38 @@
 const { JSDOM } = require("jsdom");
 
 const dom = new JSDOM("<!DOCTYPE html><html><head></head><body><div id=\"root\"></div><div id=\"app\"></div></body></html>", {
-  url: "https://blablalink.com/shiftyspad/union-raid",
+  url: "https://www.blablalink.com/shiftyspad/union-raid",
   pretendToBeVisual: true,
 });
 
 const win = dom.window;
 const doc = win.document;
 
+// Store listeners for message passing
+const listeners: any[] = [];
+
 // Mock chrome API
 const mock = {
   runtime: {
     getURL: (path: string) => `chrome-extension://mock-id/${path}`,
-    onMessage: { addListener: () => {} },
-    sendMessage: () => {},
+    onMessage: { 
+      addListener: (fn: any) => listeners.push(fn),
+      removeListener: (fn: any) => {
+        const i = listeners.indexOf(fn);
+        if (i > -1) listeners.splice(i, 1);
+      }
+    },
+    onInstalled: { addListener: () => {} },
+    onStartup: { addListener: () => {} },
+    sendMessage: (msg: any, cb?: any) => {
+      setTimeout(() => {
+        listeners.forEach(fn => {
+          try {
+            fn(msg, {}, cb);
+          } catch (e) {}
+        });
+      }, 0);
+    },
   },
   storage: {
     local: {
@@ -40,8 +59,10 @@ const mock = {
     }
   },
   tabs: {
-    query: (_: any, cb: any) => cb([{ id: 123 }]),
-    sendMessage: () => {},
+    query: (_: any, cb: any) => cb([{ id: 123, url: win.location.href }]),
+    sendMessage: (_id: any, msg: any, cb?: any) => {
+      mock.runtime.sendMessage(msg, cb);
+    },
     reload: () => {},
   },
   downloads: {
@@ -86,7 +107,6 @@ const mock = {
   destroy() {}
   dataURI() { return Promise.resolve({ imgURI: "data:image/png;base64," }); }
 };
-// Prevent blocking dialogs in CI
 (globalThis as any).alert = () => {};
 (globalThis as any).confirm = () => true;
 (globalThis as any).prompt = () => null;
@@ -112,3 +132,46 @@ Object.defineProperties(globalThis, {
   history: { value: win.history, writable: true, configurable: true },
   navigator: { value: win.navigator, writable: true, configurable: true },
 });
+
+// Expose JSDOM instance to allow reconfiguration in tests
+(globalThis as any).__JSDOM__ = dom;
+
+// Helper to update URL in tests safely
+(globalThis as any).updateTestUrl = (url: string) => {
+  dom.reconfigure({ url });
+  (globalThis as any).location = win.location;
+};
+(globalThis as any).__mockListeners = listeners;
+
+// Mock Canvas for JSDOM
+const originalCreateElement = doc.createElement.bind(doc);
+doc.createElement = (tagName: string, options: any) => {
+  if (tagName.toLowerCase() === "canvas") {
+    return {
+      getContext: () => ({
+        clearRect: () => {},
+        beginPath: () => {},
+        moveTo: () => {},
+        lineTo: () => {},
+        quadraticCurveTo: () => {},
+        closePath: () => {},
+        clip: () => {},
+        drawImage: () => {},
+        fillText: () => {},
+        measureText: () => ({ width: 100 }),
+        globalAlpha: 1,
+        fillStyle: "",
+        font: "",
+        textBaseline: "",
+      }),
+      toDataURL: () => "data:image/png;base64,mock",
+      width: 100,
+      height: 100,
+      style: {},
+      addEventListener: () => {},
+      removeEventListener: () => {},
+      dispatchEvent: () => true,
+    };
+  }
+  return originalCreateElement(tagName, options);
+};

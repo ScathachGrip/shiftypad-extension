@@ -6,11 +6,9 @@ describe("Content Script Integration", () => {
   test("should inject scrape button", () => {
     document.body.innerHTML = "<div id=\"app\"></div>";
     (window as any).__unionRaidInjected = false;
-    const { UnionRaidScraper } = require("../src/content");
-    const scraper = new UnionRaidScraper();
-    // @ts-ignore
-    scraper.injectButtons();
+    require("../src/content");
     const btn = document.getElementById("scrape-btn");
+    expect(btn).not.toBeNull();
     expect(btn).not.toBeNull();
   });
 });

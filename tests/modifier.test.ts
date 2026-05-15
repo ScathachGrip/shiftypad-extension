@@ -113,7 +113,7 @@ describe("modifier.ts utilities", () => {
       // Use a realistic openid string from blablalink
       const realOpenId = "MjkwODAtMTQwOTk2MjQyNTU1NTM1NTAzNTc=";
       const newUrl = `https://www.blablalink.com/shiftyspad/union-raid?openid=${realOpenId}`;
-      window.history.pushState({}, "Test Page", newUrl);
+      (globalThis as unknown as { updateTestUrl: (url: string) => void }).updateTestUrl(newUrl);
       
       const key = getCacheKey(); 
       const stored = globalThis.localStorage.getItem("__SHIFTYPAD_OPENID");
