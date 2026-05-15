@@ -1,6 +1,6 @@
 {
   "name": "shiftypad-extension",
-  "version": "11.0.2",
+  "version": "0.0.1",
   "description": "blablalink.com extension",
   "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
   "engines": {
