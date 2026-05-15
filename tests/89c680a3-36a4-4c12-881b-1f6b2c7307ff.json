@@ -1,0 +1,746 @@
+[
+  {
+    "player": "SIAOKIA",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 32622279951,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 32461481487,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 45977597425,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 801,
+    "total_attempt": 3,
+    "total_damage": 111061358863,
+    "total_damage_text": "111.061B"
+  },
+  {
+    "player": "RYUMA",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 43609539843,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 28922067025,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 29172471996,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 777,
+    "total_attempt": 3,
+    "total_damage": 101704078864,
+    "total_damage_text": "101.704B"
+  },
+  {
+    "player": "VOID",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 30392945763,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 29080000244,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 36990214301,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 754,
+    "total_attempt": 3,
+    "total_damage": 96463160308,
+    "total_damage_text": "96.463B"
+  },
+  {
+    "player": "KONGOD",
+    "rows": [
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 30317269502,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 28416561550,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 28636185058,
+        "difficulty": "HARD",
+        "level": 3
+      }
+    ],
+    "synchro": 685,
+    "total_attempt": 3,
+    "total_damage": 87370016110,
+    "total_damage_text": "87.37B"
+  },
+  {
+    "player": "COFFIN",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 29680832458,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 24057291236,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 31199635296,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 701,
+    "total_attempt": 3,
+    "total_damage": 84937758990,
+    "total_damage_text": "84.938B"
+  },
+  {
+    "player": "ROW",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 20691469500,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 28866843807,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 33459318801,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 675,
+    "total_attempt": 3,
+    "total_damage": 83017632108,
+    "total_damage_text": "83.018B"
+  },
+  {
+    "player": "REVS",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 20691465712,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 24493853804,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 36315968031,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 662,
+    "total_attempt": 3,
+    "total_damage": 81501287547,
+    "total_damage_text": "81.501B"
+  },
+  {
+    "player": "MAKI",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 18453444393,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 25348456937,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 28703857377,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 662,
+    "total_attempt": 3,
+    "total_damage": 72505758707,
+    "total_damage_text": "72.506B"
+  },
+  {
+    "player": "SHADOW",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 30928963345,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 21348073365,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 20004790931,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 662,
+    "total_attempt": 3,
+    "total_damage": 72281827641,
+    "total_damage_text": "72.282B"
+  },
+  {
+    "player": "MIFAFA",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 18696289717,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 28240274814,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 24917927620,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 645,
+    "total_attempt": 3,
+    "total_damage": 71854492151,
+    "total_damage_text": "71.854B"
+  },
+  {
+    "player": "KAL",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 20832811119,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 19716589872,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 30059451789,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 663,
+    "total_attempt": 3,
+    "total_damage": 70608852780,
+    "total_damage_text": "70.609B"
+  },
+  {
+    "player": "MIFUYU",
+    "rows": [
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 26006622694,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 19927720797,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 21452095054,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 664,
+    "total_attempt": 3,
+    "total_damage": 67386438545,
+    "total_damage_text": "67.386B"
+  },
+  {
+    "player": "XTARADIS",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 22234538257,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 23437930859,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 21544469315,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 689,
+    "total_attempt": 3,
+    "total_damage": 67216938431,
+    "total_damage_text": "67.217B"
+  },
+  {
+    "player": "ZIEGLER",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 20500968410,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 24149652849,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 21370010115,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 681,
+    "total_attempt": 3,
+    "total_damage": 66020631374,
+    "total_damage_text": "66.021B"
+  },
+  {
+    "player": "ARKRIDE",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 19835829180,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 25642044451,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 20458060194,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 621,
+    "total_attempt": 3,
+    "total_damage": 65935933825,
+    "total_damage_text": "65.936B"
+  },
+  {
+    "player": "SSR",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 26508241014,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 19597899839,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 19013531433,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 645,
+    "total_attempt": 3,
+    "total_damage": 65119672286,
+    "total_damage_text": "65.12B"
+  },
+  {
+    "player": "HIMEHIME",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 19052834370,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 23295218508,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 21667401545,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 662,
+    "total_attempt": 3,
+    "total_damage": 64015454423,
+    "total_damage_text": "64.015B"
+  },
+  {
+    "player": "FLAVA",
+    "rows": [
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 20754997875,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 16955111598,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 26105652446,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 625,
+    "total_attempt": 3,
+    "total_damage": 63815761919,
+    "total_damage_text": "63.816B"
+  },
+  {
+    "player": "KAZUKI",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 18458724887,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 17792212268,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 26445291675,
+        "difficulty": "HARD",
+        "level": 3
+      }
+    ],
+    "synchro": 641,
+    "total_attempt": 3,
+    "total_damage": 62696228830,
+    "total_damage_text": "62.696B"
+  },
+  {
+    "player": "FANA",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 17204956910,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 25900014713,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 16385816497,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 645,
+    "total_attempt": 3,
+    "total_damage": 59490788120,
+    "total_damage_text": "59.491B"
+  },
+  {
+    "player": "ANSHAR",
+    "rows": [
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 16465914293,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 21352229885,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 19179914332,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 615,
+    "total_attempt": 3,
+    "total_damage": 56998058510,
+    "total_damage_text": "56.998B"
+  },
+  {
+    "player": "RAINYDAY",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 18758377472,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 18726126977,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 19393500897,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 652,
+    "total_attempt": 3,
+    "total_damage": 56878005346,
+    "total_damage_text": "56.878B"
+  },
+  {
+    "player": "HIDA",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 19759959171,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 15318963398,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 12773713876,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 616,
+    "total_attempt": 3,
+    "total_damage": 47852636445,
+    "total_damage_text": "47.853B"
+  },
+  {
+    "player": "AFI",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 13729640009,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 17685530269,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Rebuild Fingers A.N.M.I.",
+        "damage": 14978415189,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 621,
+    "total_attempt": 3,
+    "total_damage": 46393585467,
+    "total_damage_text": "46.394B"
+  },
+  {
+    "player": "HANAO",
+    "rows": [
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 14046881172,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 18773376484,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 13236972498,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 621,
+    "total_attempt": 3,
+    "total_damage": 46057230154,
+    "total_damage_text": "46.057B"
+  },
+  {
+    "player": "LIVIX",
+    "rows": [
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 12652898170,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 10102562519,
+        "difficulty": "HARD",
+        "level": 1
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 13510772196,
+        "difficulty": "HARD",
+        "level": 1
+      }
+    ],
+    "synchro": 646,
+    "total_attempt": 3,
+    "total_damage": 36266232885,
+    "total_damage_text": "36.266B"
+  },
+  {
+    "player": "SKIBIDI",
+    "rows": [
+      {
+        "boss": "Material H D.M.T.R.",
+        "damage": 26197845905,
+        "difficulty": "HARD",
+        "level": 2
+      },
+      {
+        "boss": "Land Eater P.S.I.D.",
+        "damage": 21436773275,
+        "difficulty": "HARD",
+        "level": 2
+      }
+    ],
+    "synchro": 648,
+    "total_attempt": 2,
+    "total_damage": 47634619180,
+    "total_damage_text": "47.635B"
+  },
+  {
+    "player": "AIMYON",
+    "rows": [
+      {
+        "boss": "Plate H.S.T.A.",
+        "damage": 22144854739,
+        "difficulty": "HARD",
+        "level": 3
+      },
+      {
+        "boss": "Porter Z.E.U.S.",
+        "damage": 21446648964,
+        "difficulty": "HARD",
+        "level": 3
+      }
+    ],
+    "synchro": 672,
+    "total_attempt": 2,
+    "total_damage": 43591503703,
+    "total_damage_text": "43.592B"
+  }
+]
