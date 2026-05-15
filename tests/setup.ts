@@ -1,6 +1,6 @@
 import { JSDOM } from "jsdom";
 
-const dom = new JSDOM('<!DOCTYPE html><html><body></body></html>', {
+const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
   url: "https://www.blablalink.com/shiftyspad/union-raid",
   contentType: "text/html",
 });
@@ -19,7 +19,6 @@ Object.assign(globalThis, {
   Node: window.Node,
 });
 
-// Type-safe Chrome Mock
 interface ChromeMock {
   storage: {
     local: {
@@ -63,7 +62,7 @@ const localStorageMock = {
   getItem: (key: string) => mockStorage[key] || null,
   setItem: (key: string, value: string) => { mockStorage[key] = value; },
   removeItem: (key: string) => { delete mockStorage[key]; },
-  clear: () => { for (const k in mockStorage) delete mockStorage[k]; },
+  clear: () => { for (const k in mockStorage) {delete mockStorage[k];} },
   length: 0,
   key: (i: number) => Object.keys(mockStorage)[i] || null,
 };

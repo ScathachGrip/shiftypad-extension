@@ -61,15 +61,15 @@ const { a, b } = fitLinear(candidates);
 const ranked = [...candidates].sort((p1, p2) => {
   const r1 = totalDamage(p1) - (a * p1.synchro + b);
   const r2 = totalDamage(p2) - (a * p2.synchro + b);
-  if (r2 !== r1) return r2 - r1;
+  if (r2 !== r1) {return r2 - r1;}
   return totalDamage(p2) - totalDamage(p1);
 });
 
 const formatShort = (val: number): string => {
   const abs = Math.abs(val);
-  if (abs >= 1_000_000_000) return `${(val / 1_000_000_000).toFixed(1)}B`;
-  if (abs >= 1_000_000) return `${(val / 1_000_000).toFixed(1)}M`;
-  if (abs >= 1_000) return `${(val / 1_000).toFixed(1)}K`;
+  if (abs >= 1_000_000_000) {return `${(val / 1_000_000_000).toFixed(1)}B`;}
+  if (abs >= 1_000_000) {return `${(val / 1_000_000).toFixed(1)}M`;}
+  if (abs >= 1_000) {return `${(val / 1_000).toFixed(1)}K`;}
   return `${val.toFixed(0)}`;
 };
 

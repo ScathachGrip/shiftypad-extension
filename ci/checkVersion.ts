@@ -71,7 +71,7 @@ class VersionChecker {
     const releaseMatch = this.releaseTimeRe.exec(html);
     const aegisMatch = this.aegisVersionRe.exec(html);
 
-    if (!entryMatch) return null;
+    if (!entryMatch) {return null;}
 
     const [fullMatch, slot, hash] = entryMatch;
     const srcMatch = /src="([^"]+)"/.exec(fullMatch);
@@ -90,7 +90,7 @@ class VersionChecker {
    * @returns The cached version data or null if not found.
    */
   private async loadCache(): Promise<VersionCache | null> {
-    if (!existsSync(this.cachePath)) return null;
+    if (!existsSync(this.cachePath)) {return null;}
     try {
       return await Bun.file(this.cachePath).json() as VersionCache;
     } catch {
@@ -147,7 +147,7 @@ class VersionChecker {
       process.exit(1);
     }
 
-    console.log(`\nBuild detected:`);
+    console.log("\nBuild detected:");
     console.log(`  Slot : ${current.slot}`);
     console.log(`  Hash : ${current.hash}`);
     console.log(`  URL  : ${current.fullUrl}`);
@@ -165,11 +165,11 @@ class VersionChecker {
         console.log(`\nNo change detected (hash: ${current.hash})`);
         console.log(`Last saved baseline: ${cache.fetchedAt}`);
       } else {
-        console.log(`\nFRONTEND CHANGED`);
-        if (diff.slotChanged) console.log(`  Slot : ${cache.slot} -> ${current.slot}`);
-        if (diff.hashChanged) console.log(`  Hash : ${cache.hash} -> ${current.hash}`);
-        if (diff.aegisChanged) console.log(`  Aegis: ${cache.aegisVersion} -> ${current.aegisVersion}`);
-        if (diff.timeChanged) console.log(`  Time : ${cache.aegisReleaseTime} -> ${current.aegisReleaseTime}`);
+        console.log("\nFRONTEND CHANGED");
+        if (diff.slotChanged) {console.log(`  Slot : ${cache.slot} -> ${current.slot}`);}
+        if (diff.hashChanged) {console.log(`  Hash : ${cache.hash} -> ${current.hash}`);}
+        if (diff.aegisChanged) {console.log(`  Aegis: ${cache.aegisVersion} -> ${current.aegisVersion}`);}
+        if (diff.timeChanged) {console.log(`  Time : ${cache.aegisReleaseTime} -> ${current.aegisReleaseTime}`);}
 
         console.log(`  Prev : ${cache.fullUrl}`);
         console.log(`  Now  : ${current.fullUrl}`);

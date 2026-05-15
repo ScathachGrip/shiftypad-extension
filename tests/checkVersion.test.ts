@@ -30,7 +30,7 @@ describe("VersionChecker", () => {
 
   test("Negative matches", () => {
     const checker = new VersionChecker();
-    const html = `<html><body>Empty</body></html>`;
+    const html = "<html><body>Empty</body></html>";
     expect(html.match(checker.entryScriptRe)).toBeNull();
     expect(html.match(checker.aegisVersionRe)).toBeNull();
     expect(html.match(checker.releaseTimeRe)).toBeNull();

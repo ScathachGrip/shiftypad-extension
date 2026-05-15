@@ -25,7 +25,6 @@ async function addFile(zipKey: string, fsPath: string): Promise<void> {
   entries[zipKey] = new Uint8Array(await Bun.file(fsPath).arrayBuffer());
 }
 
-// 1. Add manifest and public documents from root
 const publicFiles = [
   "manifest.json",
   "CLOSING_REMARKS.md",
@@ -37,30 +36,26 @@ const publicFiles = [
 
 for (const file of publicFiles) {
   const filePath = join(root, file);
-  if (existsSync(filePath)) await addFile(file, filePath);
+  if (existsSync(filePath)) {await addFile(file, filePath);}
 }
 
-// 2. Add icons and assets folders preserving structure
 for (const folder of ["icons", "assets"]) {
   const folderPath = join(root, folder);
   if (existsSync(folderPath)) {
     const folderGlob = new Bun.Glob("**/*");
     for await (const rel of folderGlob.scan({ cwd: folderPath })) {
       const fullPath = join(folderPath, rel);
-      if (lstatSync(fullPath).isFile()) await addFile(`${folder}/${rel}`, fullPath);
+      if (lstatSync(fullPath).isFile()) {await addFile(`${folder}/${rel}`, fullPath);}
     }
   }
 }
 
-// 3. Add EVERYTHING from dist into a "dist/" prefix in the ZIP
-// Glob-relative paths map 1:1 to ZIP keys, e.g. dist/popup/popupActions.js
 const distGlob = new Bun.Glob("**/*");
 for await (const rel of distGlob.scan({ cwd: distPath })) {
   const fullPath = join(distPath, rel);
-  if (lstatSync(fullPath).isFile()) await addFile(`dist/${rel}`, fullPath);
+  if (lstatSync(fullPath).isFile()) {await addFile(`dist/${rel}`, fullPath);}
 }
 
-// 4. Output as original filename
 const outPath = join(root, `${pkg.name}.zip`);
 await Bun.write(outPath, zipSync(entries));
 

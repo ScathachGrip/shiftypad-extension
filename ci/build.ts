@@ -103,7 +103,7 @@ class ExtensionBuilder {
           const versionName = `${pkg.version}-${cache.hash}-aegis.${aegisNum}`;
           manifest.version_name = versionName.toLowerCase();
         }
-      } catch (e) {
+      } catch {
         manifest.version_name = pkg.version;
       }
     } else {
@@ -132,4 +132,4 @@ class ExtensionBuilder {
 }
 
 // Execute the build
-new ExtensionBuilder().run();
+void new ExtensionBuilder().run();
