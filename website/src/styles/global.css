@@ -185,22 +185,22 @@ code {
   }
 
   .container {
-    padding: 0 16px;
+    padding: 0 24px; /* Increased padding */
   }
 
   .card {
-    padding: 20px;
+    padding: 24px;
   }
 }
 
 @media (max-width: 480px) {
   .container {
-    padding: 0 12px;
+    padding: 0 20px; /* Increased padding */
   }
 
   .card {
-    padding: 16px;
-    border-radius: var(--radius-sm);
+    padding: 20px;
+    border-radius: var(--radius-md);
   }
 
   .section {
@@ -208,7 +208,7 @@ code {
   }
 
   .section-header h2 {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
   }
 }
 
@@ -284,11 +284,21 @@ code {
 }
 
 @media (max-width: 768px) {
+  .feat-header {
+    margin-bottom: 40px;
+  }
+  .feat-header h2 {
+    font-size: 1.8rem;
+  }
   .feat-item {
     flex-direction: column;
     gap: 16px;
+    padding: 32px 0;
   }
   .feat-side {
     min-width: auto;
+  }
+  .feat-info h3 {
+    font-size: 1.25rem;
   }
 }

@@ -1,21 +1,20 @@
 ---
 ---
 <header class="navbar">
-  <nav class="container nav-inner">
-    <a href="#" class="logo"><span class="gradient-text">shiftypad</span><span class="logo-dim">-extension</span></a>
+  <nav class="nav-container">
+    <a href="#" class="logo">
+      <span class="gradient-text">shiftypad</span><span class="logo-dim">-extension</span>
+    </a>
+    
     <div class="nav-right">
       <div class="nav-links">
-        <a href="#features">Features</a>
-        <a href="#installation">Install</a>
-        <a href="https://github.com/ScathachGrip/shiftypad-extension" target="_blank" rel="noopener noreferrer" class="nav-gh">GitHub</a>
+        <a href="#features" class="nav-item">Features</a>
+        <a href="#installation" class="nav-item">Install</a>
+        <a href="https://github.com/ScathachGrip/shiftypad-extension" target="_blank" rel="noopener noreferrer" class="nav-item">Source Code</a>
       </div>
       <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
-        <span class="icon-sun">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
-        </span>
-        <span class="icon-moon">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
-        </span>
+        <span class="icon-sun"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+        <span class="icon-moon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
       </button>
     </div>
   </nav>
@@ -32,30 +31,70 @@
       localStorage.setItem("theme", next);
     });
   }
+
+  // ScrollSpy
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".nav-item");
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "-20% 0px -70% 0px",
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
+        navLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach((section) => observer.observe(section));
 </script>
 
 <style>
   .navbar {
     position: fixed;
-    top: 0;
+    top: 24px;
     left: 0;
     right: 0;
-    z-index: 100;
-    background: var(--bg);
-    border-bottom: 1px solid var(--border);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px;
   }
 
-  .nav-inner {
+  .nav-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    height: 56px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    height: 60px;
+    padding: 0 20px;
+    width: 100%;
+    max-width: var(--max-width);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  }
+
+  :global([data-theme="dark"]) .nav-container {
+    background: rgba(15, 17, 26, 0.7);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   }
 
   .logo {
     font-size: 1.1rem;
     font-weight: 700;
     letter-spacing: -0.02em;
+    color: var(--text);
   }
 
   .logo-dim {
@@ -66,60 +105,79 @@
   .nav-right {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 12px;
   }
 
   .nav-links {
     display: flex;
-    align-items: center;
-    gap: 24px;
+    gap: 8px;
   }
 
-  .nav-links a {
+  .nav-item {
     font-size: 0.85rem;
-    color: var(--text-muted);
-    transition: color 0.2s;
-  }
-
-  .nav-links a:hover {
-    color: var(--text);
-  }
-
-  .nav-gh {
-    padding: 5px 14px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
     font-weight: 600;
-    font-size: 0.8rem !important;
-    transition: all 0.2s !important;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    background: transparent;
   }
 
-  .nav-gh:hover {
-    border-color: var(--color-primary);
-    color: var(--color-primary) !important;
+  :global([data-theme="light"]) .nav-item {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  :global([data-theme="dark"]) .nav-item {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .nav-item:hover {
+    background: var(--primary-dim);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  :global([data-theme="dark"]) .nav-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .nav-item.active {
+    background: var(--color-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
   }
 
   .theme-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 8px;
+    border-radius: 10px;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: transparent;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: color 0.2s, border-color 0.2s;
+  }
+
+  :global([data-theme="dark"]) .theme-btn {
+    color: rgba(255, 255, 255, 0.6);
   }
 
   .theme-btn:hover {
+    background: var(--primary-dim);
     color: var(--color-primary);
-    border-color: var(--color-primary);
   }
 
-  @media (max-width: 640px) {
-    .nav-links a:not(:last-child) {
+  :global([data-theme="dark"]) .theme-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
       display: none;
     }
   }
