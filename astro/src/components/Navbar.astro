@@ -1,0 +1,184 @@
+---
+---
+<header class="navbar">
+  <nav class="nav-container">
+    <a href="#" class="logo">
+      <span class="gradient-text">shiftypad</span><span class="logo-dim">-extension</span>
+    </a>
+    
+    <div class="nav-right">
+      <div class="nav-links">
+        <a href="#features" class="nav-item">Features</a>
+        <a href="#installation" class="nav-item">Install</a>
+        <a href="https://github.com/ScathachGrip/shiftypad-extension" target="_blank" rel="noopener noreferrer" class="nav-item">Source Code</a>
+      </div>
+      <button class="theme-btn" id="themeToggle" aria-label="Toggle theme">
+        <span class="icon-sun"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg></span>
+        <span class="icon-moon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<script>
+  const btn = document.getElementById("themeToggle");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      const html = document.documentElement;
+      const cur = html.getAttribute("data-theme");
+      const next = cur === "dark" ? "light" : "dark";
+      html.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+    });
+  }
+
+  // ScrollSpy
+  const sections = document.querySelectorAll("section[id]");
+  const navLinks = document.querySelectorAll(".nav-item");
+
+  const observerOptions = {
+    root: null,
+    rootMargin: "-20% 0px -70% 0px",
+    threshold: 0
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        const id = entry.target.getAttribute("id");
+        navLinks.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${id}`);
+        });
+      }
+    });
+  }, observerOptions);
+
+  sections.forEach((section) => observer.observe(section));
+</script>
+
+<style>
+  .navbar {
+    position: fixed;
+    top: 24px;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px;
+  }
+
+  .nav-container {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    border-radius: 20px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    width: 100%;
+    max-width: var(--max-width);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+  }
+
+  :global([data-theme="dark"]) .nav-container {
+    background: rgba(15, 17, 26, 0.7);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  }
+
+  .logo {
+    font-size: 1.1rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+
+  .logo-dim {
+    color: var(--text-dim);
+    font-weight: 500;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 8px;
+  }
+
+  .nav-item {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 12px;
+    transition: all 0.25s ease;
+    background: transparent;
+  }
+
+  :global([data-theme="light"]) .nav-item {
+    background: rgba(0, 0, 0, 0.03);
+  }
+
+  :global([data-theme="dark"]) .nav-item {
+    background: rgba(255, 255, 255, 0.06);
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .nav-item:hover {
+    background: var(--primary-dim);
+    color: var(--color-primary);
+    transform: translateY(-1px);
+  }
+
+  :global([data-theme="dark"]) .nav-item:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+  }
+
+  .nav-item.active {
+    background: var(--color-primary) !important;
+    color: #fff !important;
+    box-shadow: 0 4px 15px rgba(108, 92, 231, 0.4);
+  }
+
+  .theme-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 8px;
+    border-radius: 10px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  :global([data-theme="dark"]) .theme-btn {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  .theme-btn:hover {
+    background: var(--primary-dim);
+    color: var(--color-primary);
+  }
+
+  :global([data-theme="dark"]) .theme-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+  }
+
+  @media (max-width: 768px) {
+    .nav-links {
+      display: none;
+    }
+  }
+</style>

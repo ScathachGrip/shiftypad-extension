@@ -1,0 +1,294 @@
+---
+import { readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const manifestPath = resolve(__dirname, "../../../manifest.json");
+const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+const versionTag = manifest.version_name || `v${manifest.version}`;
+---
+
+<section class="hero">
+  <div class="hero-bg">
+    <img src="/hero.png" alt="" class="hero-bg-img" />
+  </div>
+  <div class="container hero-inner">
+    <div class="hero-text">
+      <span class="tag">📦 {versionTag}</span>
+      <h1>
+        Union Raid data,<br /><span class="gradient-text"
+          >right where you need it.</span>
+      </h1>
+      <p class="hero-desc">
+        Pull your Union Raid data with ease. Dive deep into your performance
+        with rich, interactive visualizations, season-aware cache, and <span style="font-weight: 900">one-click export</span>.
+      </p>
+      <div class="hero-actions">
+        <a href="#installation" class="hero-btn btn-primary">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2.5"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            ><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"
+            ></path><polyline points="7 10 12 15 17 10"></polyline><line
+              x1="12"
+              y1="15"
+              x2="12"
+              y2="3"></line></svg
+          >
+          Install Extension
+        </a>
+        <a
+          href="https://github.com/ScathachGrip/shiftypad-extension"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hero-btn btn-secondary"
+        >
+          <svg
+            xmlns="http://w3.org"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <line x1="6" y1="3" x2="6" y2="15"></line>
+            <circle cx="18" cy="6" r="3"></circle>
+            <circle cx="6" cy="18" r="3"></circle>
+            <path d="M18 9a9 9 0 0 1-9 9"></path>
+          </svg>
+          Source Code
+        </a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="/app.png" alt="Shiftypad Extension" class="hero-app-img" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding-top: 80px;
+    overflow: hidden;
+    background: var(--bg);
+  }
+
+  /* Background - Normal & Sharp */
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .hero-bg-img {
+    width: 100%;
+    height: 110%;
+    position: absolute;
+    top: -5%;
+    left: 0;
+    object-fit: cover;
+    animation: hero-up-down 3s infinite alternate cubic-bezier(0.45, 0, 0.55, 1);
+    will-change: transform;
+  }
+
+  @keyframes hero-up-down {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(30px);
+    }
+  }
+
+  [data-theme="light"] .hero-bg-img {
+    opacity: 0.4; /* Slightly faded for light mode readability, but no blur */
+  }
+
+  .hero-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: center;
+    z-index: 5;
+    max-width: 1200px;
+  }
+
+  .hero-text {
+    position: relative;
+    z-index: 10;
+  }
+
+  .hero-text .tag {
+    transform: translateY(-8px);
+  }
+
+
+  .hero-text h1 {
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+    margin-bottom: 24px;
+    color: var(--text);
+  }
+
+  .hero-desc {
+    font-size: 1.1rem;
+    color: var(--hero-desc-color);
+    line-height: 1.7;
+    max-width: 480px;
+    margin-bottom: 32px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .hero-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 28px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    cursor: pointer;
+    text-decoration: none;
+    line-height: 1;
+  }
+
+  .btn-primary {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-primary-dim)
+    );
+    color: #fff;
+    box-shadow: 0 4px 20px rgba(108, 92, 231, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 30px rgba(108, 92, 231, 0.4);
+    filter: brightness(1.1);
+  }
+
+  .btn-secondary {
+    background: var(--surface);
+    color: var(--text);
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+
+  .btn-secondary:hover {
+    transform: translateY(-2px) scale(1.02);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+
+  [data-theme="dark"] .btn-secondary {
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .hero-visual {
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+    z-index: 10;
+  }
+
+  .hero-app-img {
+    width: 100%;
+    max-width: 720px;
+    height: auto;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 40px 100px rgba(0, 0, 0, 0.4);
+    border: 1px solid var(--border);
+    margin-left: -30px;
+    transform: perspective(1200px) rotateY(-25deg) rotateX(10deg) rotateZ(-4deg);
+    transition: transform 0.3s ease;
+  }
+
+  .hero-app-img:hover {
+    transform: perspective(1000px) rotateY(0deg) rotateX(0deg) rotateZ(0deg)
+      scale(1.02);
+  }
+
+  [data-theme="light"] .hero-app-img {
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
+  }
+
+  @media (max-width: 992px) {
+    .hero-inner {
+      gap: 20px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      min-height: auto;
+      padding: 120px 0 80px;
+    }
+
+    .hero-bg {
+      width: 100%;
+      opacity: 0.2;
+      mask-image: none;
+    }
+
+    .hero-inner {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+  .hero-desc {
+      margin: 0 auto 32px;
+    }
+
+    .hero-actions {
+      justify-content: center;
+      flex-direction: column;
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto;
+      gap: 12px;
+    }
+
+    .hero-btn {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 24px;
+      font-size: 0.9rem;
+      border-radius: 12px;
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      padding: 4px 10px;
+    }
+
+    .hero-visual {
+      display: none;
+    }
+  }
+</style>

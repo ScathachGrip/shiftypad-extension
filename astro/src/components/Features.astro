@@ -1,0 +1,64 @@
+---
+interface Feature {
+  svg: string;
+  title: string;
+  desc: string;
+}
+
+const features: Feature[] = [
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+    title: "One-click scrape",
+    desc: "Pull all member raid data from the page with a single click.",
+  },
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>',
+    title: "Interactive charts",
+    desc: "Damage, boss splits, synchro levels, all interactive.",
+  },
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>',
+    title: "Season cache",
+    desc: "Data per season. Switch without re-scraping.",
+  },
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>',
+    title: "CSV / JSON export",
+    desc: "Download data or chart PNGs. No servers involved.",
+  },
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 14.66V20a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h5.34"/><polygon points="18 2 22 6 12 16 8 16 8 12 18 2"/></svg>',
+    title: "Compact popup",
+    desc: "Everything in a small popup. No tab clutter.",
+  },
+  {
+    svg: '<svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>',
+    title: "Privacy-first",
+    desc: "All data stays in your browser. Nothing leaves your machine",
+  },
+];
+---
+
+<section id="features" class="section">
+  <div class="container">
+    <div class="feat-header">
+      <span class="tag">Features</span>
+      <h2>Everything you need for <span class="gradient-text">Union Raid analytics</span></h2>
+    </div>
+
+    <div class="feat-list">
+      {features.map((feature, index) => (
+        <div class="feat-item">
+          <div class="feat-side">
+            <span class="feat-idx">{(index + 1).toString().padStart(2, '0')}</span>
+            <div class="feat-icon-wrap" set:html={feature.svg} />
+          </div>
+          <div class="feat-info">
+            <h3>{feature.title}</h3>
+            <p>{feature.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
