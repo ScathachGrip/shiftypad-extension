@@ -211,3 +211,84 @@ code {
     font-size: 1.3rem;
   }
 }
+
+/* Features Section */
+.feat-header {
+  margin-bottom: 60px;
+  text-align: left;
+}
+
+.feat-header h2 {
+  font-size: 2.5rem;
+  margin-top: 8px;
+  font-weight: 800;
+}
+
+.feat-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.feat-item {
+  display: flex;
+  gap: 40px;
+  padding: 40px 0;
+  border-top: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.feat-item:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.feat-item:hover {
+  padding-left: 20px;
+}
+
+.feat-side {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-width: 120px;
+}
+
+.feat-idx {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  opacity: 0.6;
+}
+
+.feat-icon-wrap {
+  color: var(--text-muted);
+  transition: all 0.3s ease;
+}
+
+.feat-item:hover .feat-icon-wrap {
+  color: var(--color-primary);
+}
+
+.feat-info h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 6px;
+  color: var(--text);
+}
+
+.feat-info p {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  max-width: 700px;
+  line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+  .feat-item {
+    flex-direction: column;
+    gap: 16px;
+  }
+  .feat-side {
+    min-width: auto;
+  }
+}
