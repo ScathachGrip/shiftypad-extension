@@ -1,0 +1,115 @@
+---
+---
+<div class="browsers-wrap">
+  <div class="container">
+    <div class="browsers-inner">
+      <span class="browsers-label">Compatible with</span>
+      <div class="browsers-list">
+        <div class="browser-item" title="Google Chrome">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C8.21 0 4.83 1.55 2.46 4.04L7.11 12.11C7.11 12.11 7.11 12.11 7.11 12.11C7.11 12.11 7.11 12.11 7.11 12.11C7.38 12.57 7.7 13 8.07 13.37C8.44 13.74 8.87 14.06 9.33 14.33C9.8 14.6 10.31 14.79 10.84 14.91C11.37 15.03 11.92 15.09 12.47 15.09C13.02 15.09 13.57 15.03 14.1 14.91C14.63 14.79 15.14 14.6 15.61 14.33C16.08 14.06 16.51 13.74 16.88 13.37C17.25 13 17.57 12.57 17.84 12.11L22.49 4.04C20.12 1.55 16.74 0 12.95 0H12ZM12 7.03C12.66 7.03 13.31 7.16 13.91 7.41C14.51 7.66 15.05 8.02 15.51 8.48C15.97 8.94 16.33 9.48 16.58 10.08C16.83 10.68 16.96 11.33 16.96 11.99C16.96 12.65 16.83 13.3 16.58 13.9C16.33 14.5 15.97 15.04 15.51 15.5C15.05 15.96 14.51 16.32 13.91 16.57C13.31 16.82 12.66 16.95 12 16.95C11.34 16.95 10.69 16.82 10.09 16.57C9.49 16.32 8.95 15.96 8.49 15.5C8.03 15.04 7.67 14.5 7.42 13.9C7.17 13.3 7.04 12.65 7.04 11.99C7.04 11.33 7.17 10.68 7.42 10.08C7.67 9.48 8.03 8.94 8.49 8.48C8.95 8.02 9.49 7.66 10.09 7.41C10.69 7.16 11.34 7.03 12 7.03Z"/>
+          </svg>
+          <span>Chrome</span>
+        </div>
+        <div class="browser-item" title="Brave Browser">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+             <path d="M12 0L14.6 7.6H22.4L16.2 12.2L18.8 19.8L12.6 15.2L6.4 19.8L9 12.2L2.8 7.6H10.6L12 0Z"/>
+          </svg>
+          <span>Brave</span>
+        </div>
+        <div class="browser-item" title="Microsoft Edge">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.31 0 9.6 4.29 9.6 9.6s-4.29 9.6-9.6 9.6-9.6-4.29-9.6-9.6 4.29-9.6 9.6-9.6z"/>
+          </svg>
+          <span>Edge</span>
+        </div>
+        <div class="browser-item" title="Opera">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.31 0 9.6 4.29 9.6 9.6s-4.29 9.6-9.6 9.6-9.6-4.29-9.6-9.6 4.29-9.6 9.6-9.6z"/>
+          </svg>
+          <span>Opera</span>
+        </div>
+        <div class="browser-item" title="Arc Browser">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm0 2.4c5.31 0 9.6 4.29 9.6 9.6s-4.29 9.6-9.6 9.6-9.6-4.29-9.6-9.6 4.29-9.6 9.6-9.6z"/>
+          </svg>
+          <span>Arc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .browsers-wrap {
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  [data-theme="dark"] .browsers-wrap {
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  .browsers-inner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .browsers-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    opacity: 0.6;
+  }
+
+  .browsers-list {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .browser-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    transition: all 0.3s ease;
+    filter: grayscale(1);
+    opacity: 0.5;
+  }
+
+  .browser-item:hover {
+    filter: grayscale(0);
+    opacity: 1;
+    color: var(--text);
+    transform: translateY(-1px);
+  }
+
+  .browser-item span {
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 768px) {
+    .browsers-inner {
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .browsers-list {
+      gap: 16px;
+    }
+    
+    .browser-item span {
+      display: none;
+    }
+  }
+</style>
