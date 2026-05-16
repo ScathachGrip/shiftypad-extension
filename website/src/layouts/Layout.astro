@@ -10,7 +10,7 @@ const { title = "shiftypad-extension", description = "Analytics extension for Bl
 ---
 
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -33,7 +33,7 @@ const { title = "shiftypad-extension", description = "Analytics extension for Bl
 <script>
   (function () {
     const saved = localStorage.getItem("theme");
-    const theme = saved || "dark";
+    const theme = saved || "light";
     document.documentElement.setAttribute("data-theme", theme);
   })();
 </script>
