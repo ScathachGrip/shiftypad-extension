@@ -10,7 +10,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
 
 <section class="hero">
   <div class="hero-bg">
-    <img src="/hero.png" alt="" class="hero-bg-img" />
+    <img src={`${import.meta.env.BASE_URL}hero.png`} alt="" class="hero-bg-img" />
   </div>
   <div class="container hero-inner">
     <div class="hero-text">
@@ -70,7 +70,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
       </div>
     </div>
     <div class="hero-visual">
-      <img src="/app.png" alt="Shiftypad Extension" class="hero-app-img" />
+      <img src={`${import.meta.env.BASE_URL}app.png`} alt="Shiftypad Extension" class="hero-app-img" />
     </div>
   </div>
 </section>
