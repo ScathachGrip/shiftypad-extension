@@ -1,7 +1,8 @@
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
-  site: "https://scathachgrip.github.io/shiftypad-extension",
+  site: "https://scathachgrip.github.io",
+  base: "/shiftypad-extension/",
   outDir: "dist",
   build: {
     format: "file",
