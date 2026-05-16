@@ -1,0 +1,87 @@
+---
+---
+<footer class="footer">
+  <div class="container footer-inner">
+    <div class="footer-brand">
+      <strong><span class="gradient-text">shiftypad</span>-extension</strong>
+      <p>Analytics extension for Blablalink Union Raid. MIT licensed.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#features">Features</a>
+      <a href="#installation">Install</a>
+      <a href="https://github.com/ScathachGrip/shiftypad-extension" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.com/ScathachGrip/shiftypad-extension/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">License</a>
+    </div>
+  </div>
+  <div class="footer-bottom container">
+    <p>&copy; 2026 sinkaroid. Built with Bun and Astro.</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 48px;
+    padding-bottom: 48px;
+    gap: 32px;
+  }
+
+  .footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .footer-brand strong {
+    font-size: 0.95rem;
+  }
+
+  .footer-brand p {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+
+  .footer-links a {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover {
+    color: var(--text);
+  }
+
+  .footer-bottom {
+    padding-top: 16px;
+    padding-bottom: 16px;
+    border-top: 1px solid var(--border);
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  @media (max-width: 640px) {
+    .footer-inner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding-top: 32px;
+      padding-bottom: 32px;
+      gap: 20px;
+    }
+
+    .footer-links {
+      gap: 16px;
+    }
+  }
+</style>
