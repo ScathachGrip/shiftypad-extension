@@ -1,5 +1,5 @@
 {
-  "name": "shiftypad-extension-website",
+  "name": "shiftypad-extension-astro",
   "type": "module",
   "version": "1.0.0",
   "private": true,
