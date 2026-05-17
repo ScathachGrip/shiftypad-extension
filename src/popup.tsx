@@ -617,6 +617,14 @@ body.theme-dark .segmented-btn.active {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 `;
 
 const POPUP_HTML = `
@@ -645,6 +653,7 @@ const POPUP_HTML = `
       </div>
 
       <div class="row-bottom">
+        <button id="btnLimitBreaks">Limit breaks</button>
         <button id="themeToggle">Theme: Light</button>
         <button id="siteSettings">DisabledBackground</button>
         <div class="dropdown" id="exportDropdown">
@@ -668,6 +677,16 @@ const POPUP_HTML = `
       <div class="num" data-key="damage">Damage</div>
     </div>
     <div id="list"></div>
+  </div>
+
+  <div id="chartLimitBreaksContainer" style="display:none; padding: 0 4px; flex-direction: column; max-height: 500px;">
+    <div class="segmented-control" style="margin-bottom: 12px; flex-shrink: 0;">
+      <button id="btnLimitBreaksHtml" class="segmented-btn active">HTML View</button>
+      <button id="btnLimitBreaksJson" class="segmented-btn">Raw JSON</button>
+    </div>
+    <input type="text" id="limitBreaksSearch" placeholder="Search by nickname..." style="margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); outline: none; width: 100%; font-size: 13px; flex-shrink: 0;">
+    <div id="limitBreaksJsonOutput" class="hide-scrollbar" style="overflow-y: auto; flex-grow: 1;"></div>
+    <pre id="limitBreaksRawJsonOutput" class="hide-scrollbar" style="display: none; overflow-y: auto; flex-grow: 1; font-size: 11px; white-space: pre-wrap; word-wrap: break-word; color: var(--text); margin: 0;"></pre>
   </div>
 
   <div id="chartContainer" style="display:none;">

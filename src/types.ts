@@ -10,11 +10,22 @@ type SynchroRow = {
   synchroLevel: number;
 };
 
+export type NikkeHero = {
+  avatarName: string;
+  avatarUrl: string;
+  synchroLevel: number;
+  limitBreak: number;
+  coreLevel: string;
+  finalTier: string;
+  combatPower: string;
+};
+
 type RaidDamageRow = {
   boss: string;
   difficulty: string;
   level: number;
   damage: number;
+  heroes?: NikkeHero[];
 };
 
 type PlayerRaidResult = {
@@ -83,12 +94,17 @@ type PopupState = {
   chartAvgContainer: HTMLElement;
   chartAvgDamageContainer: HTMLElement;
   chartTopDrawerContainer: HTMLElement;
+  chartLimitBreaksContainer: HTMLElement;
+  limitBreaksJsonOutput: HTMLElement;
+  limitBreaksRawJsonOutput: HTMLElement;
+  limitBreaksSearch: HTMLInputElement;
   btnTable: HTMLElement;
   btnChart: HTMLElement;
   btnChartBoss: HTMLElement;
   btnAvgSynchro: HTMLElement;
   btnAvgDamage: HTMLElement;
   btnTopDrawer: HTMLElement;
+  btnLimitBreaks: HTMLElement;
   btnResidualTop: HTMLElement;
   btnResidualLow: HTMLElement;
   scrapeBtn: HTMLButtonElement | null;

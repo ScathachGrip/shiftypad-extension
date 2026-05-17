@@ -302,7 +302,9 @@ async function scrapeUnionRaidAllModals(
   for (let i = 0; i < buttons.length; i++) {
     if (stopRequested) {break;}
 
-    console.log(`💥 Click ${i + 1}/${buttons.length}`);
+    const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
+
+    console.log(`💥 Click ${i + 1}/${buttons.length} (Expected: ${expectedPlayerName})`);
     buttons[i].click();
 
     const modal = await waitForModalAppear();
@@ -311,16 +313,22 @@ async function scrapeUnionRaidAllModals(
       continue;
     }
 
-    const playerName =
-      modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ??
-      "UNKNOWN";
+    let playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
+    let waitAttempts = 0;
+    
+    // Wait for Vue to patch the modal for the new player (Text updates)
+    while (waitAttempts < 25 && expectedPlayerName && playerName !== expectedPlayerName) {
+      await sleepMs(20); // Super fast check
+      playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
+      waitAttempts++;
+    }
 
-    console.log(`👤 Player: ${playerName}`);
+    console.log(`👤 Player: ${playerName}. Extracting data...`);
 
     const rows = extractRowsFromModal(modal);
     console.log("📦 Extracted rows:", rows);
 
-    // ONLY DEBUG SYNCHRO (LOG + APPLY)
+    // SYNCHRO (LOG + APPLY)
     const firstCard = modal.querySelector<HTMLElement>(".av .relative");
 
     let debugLvText: string | undefined;
@@ -355,8 +363,14 @@ async function scrapeUnionRaidAllModals(
       rows,
     });
 
-    closeModal(modal);
-    await sleepMs(120);
+    const closed = await closeModal(modal);
+
+    if (closed) {
+      console.log(`✅ Modal ${i + 1} closed. Waiting 500ms...`);
+      await sleepMs(500);
+    } else {
+      console.warn(`⚠️ Modal ${i + 1} failed to close cleanly. Proceeding anyway.`);
+    }
   }
 
   console.log("✅ SCRAPE DONE");
@@ -445,11 +459,55 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
 
       const damage = Number(damageText.replace(/,/g, ""));
 
+      const heroes: import("../types").NikkeHero[] = [];
+      const heroContainers = block.querySelectorAll("div.relative.mr-\\[5px\\].w-\\[52px\\]");
+      
+      heroContainers.forEach((hero, index) => {
+        const avatarImg = hero.querySelector("img[alt^='Avatar']");
+        const avatarName = avatarImg ? avatarImg.getAttribute("alt") || `Hero ${index + 1}` : `Hero ${index + 1}`;
+        const avatarUrl = avatarImg ? avatarImg.getAttribute("src") || "Unknown URL" : "Unknown URL";
+
+        const starContainer = hero.querySelector("div[data-cname='index']");
+        if (!starContainer) { return; }
+
+        const goldStars = starContainer.querySelectorAll("img[src*='star-gold']");
+        const starCount = goldStars.length;
+
+        let coreText = "0";
+        const evolveP = starContainer.querySelector("p");
+        if (evolveP) {
+          coreText = evolveP.textContent?.trim() || "0";
+        }
+
+        let finalTier = `LB ${starCount}`;
+        if (coreText !== "0") {
+          finalTier = `Core ${coreText}`;
+        }
+
+        const cpContainer = hero.querySelector(".text-\\[var\\(--text-3\\)\\].text-\\[9px\\]");
+        const cp = cpContainer ? cpContainer.textContent?.trim() || "Unknown CP" : "Unknown CP";
+
+        const levelContainer = hero.querySelector(".bg-gradient-to-b > div");
+        const synchroLevelText = levelContainer ? levelContainer.textContent?.trim() || "LV.0" : "LV.0";
+        const synchroLevel = parseInt(synchroLevelText.replace(/[^0-9]/g, ""), 10) || 0;
+
+        heroes.push({
+          avatarName,
+          avatarUrl,
+          synchroLevel,
+          limitBreak: starCount,
+          coreLevel: coreText,
+          finalTier,
+          combatPower: cp
+        });
+      });
+
       const row: RaidDamageRow = {
         boss,
         difficulty,
         level,
         damage,
+        heroes,
       };
 
       console.log(`[ROW ${i + 1}]`, row);
@@ -490,14 +548,47 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
 }
 
 /**
- * Close a Union Raid modal by clicking its close button.
- *
- * @param {HTMLElement} modal - The modal element to close.
- * @returns {void} This function does not return a value.
+ * Closes the player modal by finding the active overlay and clicking it.
  */
-function closeModal(modal: HTMLElement): void {
-  const btn = modal.querySelector<HTMLButtonElement>("button");
-  if (btn) {btn.click();}
+async function closeModal(modal: HTMLElement): Promise<boolean> {
+  console.log("Attempting to close modal via simple DOM relation clicks...");
+
+  // 1. If the backdrop is a sibling (very common in Tailwind/Vue headless setups)
+  let prev = modal.previousElementSibling as HTMLElement;
+  while (prev) {
+    prev.click();
+    prev = prev.previousElementSibling as HTMLElement;
+  }
+
+  let next = modal.nextElementSibling as HTMLElement;
+  while (next) {
+    next.click();
+    next = next.nextElementSibling as HTMLElement;
+  }
+
+  // 2. If the backdrop is the parent wrapper
+  modal.parentElement?.click();
+
+  // 3. Fallback to known framework overlay classes
+  const overlays = document.querySelectorAll(".van-overlay, .el-overlay, [class*=\"overlay\"], [class*=\"backdrop\"]");
+  overlays.forEach(overlay => {
+    const el = overlay as HTMLElement;
+    if (window.getComputedStyle(el).display !== "none") {
+      el.click();
+    }
+  });
+
+  // Wait for transition
+  let closed = false;
+  for (let j = 0; j < 20; j++) {
+    if (!document.body.contains(modal) || modal.offsetWidth === 0 || window.getComputedStyle(modal).display === "none") {
+      closed = true;
+      break;
+    }
+    await sleepMs(50);
+  }
+  
+  return closed;
 }
 
 /**

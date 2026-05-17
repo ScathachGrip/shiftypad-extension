@@ -31,6 +31,11 @@ class UnionRaidPopup {
   public btnTopDrawer: HTMLElement;
   public btnResidualTop: HTMLElement;
   public btnResidualLow: HTMLElement;
+  public btnLimitBreaks: HTMLElement;
+  public chartLimitBreaksContainer: HTMLElement;
+  public limitBreaksJsonOutput: HTMLElement;
+  public limitBreaksRawJsonOutput: HTMLElement;
+  public limitBreaksSearch: HTMLInputElement;
   public scrapeBtn: HTMLButtonElement | null;
   public output: HTMLElement | null;
   public btnSiteSettings: HTMLElement;
@@ -84,6 +89,11 @@ class UnionRaidPopup {
     this.btnTopDrawer = getEl("btnTopDrawer");
     this.btnResidualTop = getEl("btnResidualTop");
     this.btnResidualLow = getEl("btnResidualLow");
+    this.btnLimitBreaks = getEl("btnLimitBreaks");
+    this.chartLimitBreaksContainer = getEl("chartLimitBreaksContainer");
+    this.limitBreaksJsonOutput = getEl("limitBreaksJsonOutput");
+    this.limitBreaksRawJsonOutput = getEl("limitBreaksRawJsonOutput");
+    this.limitBreaksSearch = getEl("limitBreaksSearch") as HTMLInputElement;
     this.scrapeBtn = document.getElementById("scrapeBtn") as HTMLButtonElement | null;
     this.output = document.getElementById("output");
     this.btnSiteSettings = getEl("siteSettings");

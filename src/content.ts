@@ -254,7 +254,7 @@ class UnionRaidScraper {
    */
   private trackHardClick(e: MouseEvent): void {
     const target = e.target as HTMLElement | null;
-    if (!target) { return; }
+    if (!target || typeof target.closest !== "function") { return; }
     if (target.closest("#scrape-btn")) { return; }
     const raw = target.textContent?.replace(/\s+/g, " ").trim() ?? "";
     // console.log(`[LastClick] ${raw ? `"${raw}"` : "(no text)"}`);
@@ -389,7 +389,7 @@ class UnionRaidScraper {
 
   private trackSeasonClick(e: MouseEvent): void {
     const target = e.target as HTMLElement | null;
-    if (!target) { return; }
+    if (!target || typeof target.closest !== "function") { return; }
     const normalize = (val: string): string => val.replace(/\s+/g, " ").trim();
     const matchSeason = (val: string): string => {
       const m = val.match(/\[S\d+\]\s*\d{1,2}\/\d{1,2}\/\d{4}\s*\d{1,2}:\d{2}\s*-\s*\d{1,2}\/\d{1,2}\/\d{4}\s*\d{1,2}:\d{2}/i);

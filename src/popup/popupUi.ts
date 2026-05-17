@@ -37,6 +37,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.btnAvgSynchro.classList.remove("active");
     state.btnAvgDamage.classList.remove("active");
     state.btnTopDrawer.classList.remove("active");
+    state.btnLimitBreaks.classList.remove("active");
   };
 
   const setPopupSize = (width: string, minHeight: string | null = null): void => {
@@ -50,6 +51,117 @@ export function setupToggleButtons(state: PopupState): void {
     }
   };
 
+  state.btnLimitBreaks.onclick = () => {
+    state.tableContainer.style.display = "none";
+    state.chartContainer.style.display = "none";
+    state.chartBossContainer.style.display = "none";
+    state.chartAvgContainer.style.display = "none";
+    state.chartAvgDamageContainer.style.display = "none";
+    state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "flex";
+
+    deactivateAll();
+    state.btnLimitBreaks.classList.add("active");
+    setPopupSize("720px", "600px");
+
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      const url = tabs[0]?.url;
+      if (!url) {return;}
+      
+      const { getCacheKeyFromUrl } = require("./popupUtils");
+      const baseKey = getCacheKeyFromUrl(url);
+      const cacheKey = `ALL_UNION_RAID_DAMAGE_DATA_${baseKey}__${state.activeSeasonKey}`;
+      
+      chrome.storage.local.get(cacheKey, (res) => {
+        const data = res[cacheKey] as import("../types").PlayerRaidResult[];
+        if (!data || !Array.isArray(data)) {
+          state.limitBreaksJsonOutput.textContent = "No data found or please re-scrape.";
+          return;
+        }
+
+        let htmlContent = "";
+
+        data.forEach(playerResult => {
+          const allHeroes: import("../types").NikkeHero[] = [];
+          playerResult.rows.forEach(r => {
+            if (r.heroes) {
+              allHeroes.push(...r.heroes);
+            }
+          });
+           
+          // Unique heroes
+          const uniqueHeroes = Array.from(new Map(allHeroes.map(h => [h.avatarUrl, h])).values());
+           
+          if (uniqueHeroes.length === 0) {
+            return;
+          }
+
+          htmlContent += `
+            <div class="limit-break-player" data-player="${playerResult.player.toLowerCase()}" style="margin-bottom: 12px; background: var(--surface-2); padding: 10px; border-radius: 12px; border: 1px solid var(--border);">
+              <h4 style="margin: 0 0 10px 0; font-size: 14px; color: var(--accent); border-bottom: 1px solid var(--border); padding-bottom: 6px;">
+                👤 ${playerResult.player}
+              </h4>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                ${uniqueHeroes.map(h => `
+                  <div style="width: 48px; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+                    <img src="${h.avatarUrl}" width="48" height="48" style="border-radius: 8px; border: 1px solid var(--border); object-fit: cover;" title="${h.avatarName || "Unknown"}">
+                    <span style="font-size: 10px; font-weight: 700; color: ${Number(h.coreLevel) > 0 ? "#ffb400" : "var(--text)"}; text-align: center; white-space: nowrap; background: rgba(0,0,0,0.4); padding: 2px 4px; border-radius: 4px;">
+                      ${h.finalTier}
+                    </span>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+          `;
+        });
+        
+        if (!htmlContent) {
+          state.limitBreaksJsonOutput.innerHTML = "<div style='padding: 10px; color: var(--text);'>No hero data found for this season.</div>";
+        } else {
+          state.limitBreaksJsonOutput.innerHTML = htmlContent;
+        }
+
+        state.limitBreaksRawJsonOutput.textContent = JSON.stringify(data, null, 2);
+
+        state.limitBreaksSearch.oninput = (e) => {
+          const filter = (e.target as HTMLInputElement).value.toLowerCase();
+          const players = state.limitBreaksJsonOutput.querySelectorAll(".limit-break-player");
+          players.forEach((p) => {
+            const name = (p as HTMLElement).dataset.player || "";
+            if (name.includes(filter)) {
+              (p as HTMLElement).style.display = "block";
+            } else {
+              (p as HTMLElement).style.display = "none";
+            }
+          });
+        };
+      });
+    });
+  };
+
+  const btnLimitBreaksHtml = document.getElementById("btnLimitBreaksHtml");
+  const btnLimitBreaksJson = document.getElementById("btnLimitBreaksJson");
+  
+  if (btnLimitBreaksHtml && btnLimitBreaksJson) {
+    btnLimitBreaksHtml.onclick = () => {
+      btnLimitBreaksHtml.classList.add("active");
+      btnLimitBreaksJson.classList.remove("active");
+      state.limitBreaksJsonOutput.style.display = "block";
+      state.limitBreaksSearch.style.display = "block";
+      const rawOutput = document.getElementById("limitBreaksRawJsonOutput");
+      if (rawOutput) {rawOutput.style.display = "none";}
+    };
+
+    btnLimitBreaksJson.onclick = () => {
+      btnLimitBreaksJson.classList.add("active");
+      btnLimitBreaksHtml.classList.remove("active");
+      state.limitBreaksJsonOutput.style.display = "none";
+      state.limitBreaksSearch.style.display = "none";
+      const rawOutput = document.getElementById("limitBreaksRawJsonOutput");
+      if (rawOutput) {rawOutput.style.display = "block";}
+    };
+  }
+
   state.btnChart.onclick = () => {
     state.tableContainer.style.display = "none";
     state.chartContainer.style.display = "block";
@@ -57,6 +169,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "none";
     state.chartAvgDamageContainer.style.display = "none";
     state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnChart.classList.add("active");
@@ -72,6 +185,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "none";
     state.chartAvgDamageContainer.style.display = "none";
     state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnTable.classList.add("active");
@@ -85,6 +199,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "none";
     state.chartAvgDamageContainer.style.display = "none";
     state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnChartBoss.classList.add("active");
@@ -100,6 +215,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "block";
     state.chartAvgDamageContainer.style.display = "none";
     state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnAvgSynchro.classList.add("active");
@@ -115,6 +231,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "none";
     state.chartAvgDamageContainer.style.display = "block";
     state.chartTopDrawerContainer.style.display = "none";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnAvgDamage.classList.add("active");
@@ -130,6 +247,7 @@ export function setupToggleButtons(state: PopupState): void {
     state.chartAvgContainer.style.display = "none";
     state.chartAvgDamageContainer.style.display = "none";
     state.chartTopDrawerContainer.style.display = "block";
+    state.chartLimitBreaksContainer.style.display = "none";
 
     deactivateAll();
     state.btnTopDrawer.classList.add("active");
