@@ -467,6 +467,55 @@ body.theme-dark #chartAvgDummy .apexcharts-grid {
   justify-content: center;
 }
 
+.segmented-control {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+}
+
+body.theme-dark .segmented-control {
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.segmented-btn {
+  flex: 1;
+  background: transparent !important;
+  color: var(--muted) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-weight: 600 !important;
+  font-size: 11.5px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.segmented-btn:hover {
+  color: var(--text) !important;
+  background: var(--row-hover) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.segmented-btn.active {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  border: 1px solid var(--border) !important;
+}
+
+body.theme-dark .segmented-btn.active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+}
+
 .dropdown {
   position: relative;
   display: inline-flex;
@@ -643,6 +692,10 @@ const POPUP_HTML = `
   </div>
 
   <div id="chartTopDrawerContainer" style="display:none;">
+    <div class="segmented-control">
+      <button id="btnResidualTop" class="segmented-btn active">Above Expectations</button>
+      <button id="btnResidualLow" class="segmented-btn">Below Expectations</button>
+    </div>
     <div class="chart-block">
       <div id="chartTopDrawerDummy"></div>
     </div>

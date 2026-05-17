@@ -162,7 +162,7 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
           (res: GetMembersResponse) => {
             state.loadingOverlay.classList.add("hidden");
             if (chrome.runtime.lastError) {
-              alert("Content script not ready. Reloading this page now.");
+              alert("Page connection lost. Refreshing the page to reconnect.");
               void chrome.tabs.reload(tabId);
               window.close();
               return;
@@ -257,6 +257,12 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
         tabId,
         { type: "GET_ACTIVE_SEASON" },
         (active: { seasonKey?: string }) => {
+          if (chrome.runtime.lastError) {
+            alert("Page connection lost. Refreshing the page to reconnect.");
+            void chrome.tabs.reload(tabId);
+            window.close();
+            return;
+          }
           const lockedSeasonKey = active?.seasonKey ?? "";
           const selectedSeasonKey = lockedSeasonKey || "";
           if (!selectedSeasonKey) {

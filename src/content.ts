@@ -490,8 +490,9 @@ class UnionRaidScraper {
     // Preference: 
     // 1. Manually clicked/locked season
     // 2. DOM season
-    const targetSeasonKey = this.manualSeasonLocked ? this.selectedSeasonKey : liveSeasonKey;
-    const targetSeasonText = this.manualSeasonLocked ? this.selectedSeasonText : liveSeasonText;
+    // 3. Fallback to hydrated/selected season
+    const targetSeasonKey = this.manualSeasonLocked ? this.selectedSeasonKey : (liveSeasonKey || this.selectedSeasonKey);
+    const targetSeasonText = this.manualSeasonLocked ? this.selectedSeasonText : (liveSeasonText || this.selectedSeasonText);
 
     if (!targetSeasonKey) {
       console.error("[Scraping] Could not detect season key. Aborting.");

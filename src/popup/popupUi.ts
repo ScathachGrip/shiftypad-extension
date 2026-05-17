@@ -133,9 +133,23 @@ export function setupToggleButtons(state: PopupState): void {
 
     deactivateAll();
     state.btnTopDrawer.classList.add("active");
+    state.btnResidualTop.classList.add("active");
+    state.btnResidualLow.classList.remove("active");
     setPopupSize("720px");
 
-    renderTopDrawerChart(state);
+    renderTopDrawerChart(state, "top");
+  };
+
+  state.btnResidualTop.onclick = () => {
+    state.btnResidualTop.classList.add("active");
+    state.btnResidualLow.classList.remove("active");
+    renderTopDrawerChart(state, "top");
+  };
+
+  state.btnResidualLow.onclick = () => {
+    state.btnResidualLow.classList.add("active");
+    state.btnResidualTop.classList.remove("active");
+    renderTopDrawerChart(state, "low");
   };
 }
 

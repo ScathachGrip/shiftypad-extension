@@ -29,6 +29,8 @@ class UnionRaidPopup {
   public btnAvgSynchro: HTMLElement;
   public btnAvgDamage: HTMLElement;
   public btnTopDrawer: HTMLElement;
+  public btnResidualTop: HTMLElement;
+  public btnResidualLow: HTMLElement;
   public scrapeBtn: HTMLButtonElement | null;
   public output: HTMLElement | null;
   public btnSiteSettings: HTMLElement;
@@ -80,6 +82,8 @@ class UnionRaidPopup {
     this.btnAvgSynchro = getEl("btnAvgSynchro");
     this.btnAvgDamage = getEl("btnAvgDamage");
     this.btnTopDrawer = getEl("btnTopDrawer");
+    this.btnResidualTop = getEl("btnResidualTop");
+    this.btnResidualLow = getEl("btnResidualLow");
     this.scrapeBtn = document.getElementById("scrapeBtn") as HTMLButtonElement | null;
     this.output = document.getElementById("output");
     this.btnSiteSettings = getEl("siteSettings");

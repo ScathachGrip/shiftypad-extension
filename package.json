@@ -1,6 +1,6 @@
 {
   "name": "shiftypad-extension",
-  "version": "0.0.17",
+  "version": "0.0.28",
   "description": "Analytics extension for Blablalink Union Raid management.",
   "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
   "engines": {

@@ -89,6 +89,8 @@ type PopupState = {
   btnAvgSynchro: HTMLElement;
   btnAvgDamage: HTMLElement;
   btnTopDrawer: HTMLElement;
+  btnResidualTop: HTMLElement;
+  btnResidualLow: HTMLElement;
   scrapeBtn: HTMLButtonElement | null;
   output: HTMLElement | null;
   btnSiteSettings: HTMLElement;
