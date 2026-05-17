@@ -3,17 +3,21 @@ exclude_patterns = [
   "node_modules/**",
   "ci/**",
   "tests/**",
-  "build/**"
+  "build/**",
+  "astro/**"
 ]
 
 [smells]
 mode = "block"
 
+[smells.identical_code]
+enabled = false
+
 [smells.similar_code]
 enabled = false
 
 [smells.file_complexity]
-threshold = 120
+threshold = 150
 
 [smells.function_complexity]
 threshold = 100

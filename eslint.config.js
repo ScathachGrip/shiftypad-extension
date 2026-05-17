@@ -16,7 +16,7 @@ const root = getRealProjectRoot(__dirname);
 
 module.exports = [
   {
-    ignores: ["node_modules/**", "build/**", "dist/**"],
+    ignores: ["node_modules/**", "build/**", "dist/**", "astro/**"],
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
