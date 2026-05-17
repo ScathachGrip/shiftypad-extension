@@ -289,129 +289,183 @@ async function scrapeUnionRaidAllModals(
 
   scrapingInProgress = true;
 
-  const buttons = Array.from(
-    document.querySelectorAll<HTMLSpanElement>(
-      "table tbody tr td span[data-cname='svg-icon']"
-    )
-  );
+  const spinner = document.createElement("div");
+  spinner.id = "shiftypad-scrape-spinner";
+  spinner.style.cssText = `
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    pointer-events: none;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+  `;
+  spinner.innerHTML = `
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <style>
+        @keyframes shiftypad-spin { 100% { transform: rotate(360deg); } }
+        .shiftypad-spin-anim { 
+          animation: shiftypad-spin 1s linear infinite; 
+          transform-origin: center;
+        }
+      </style>
+      <g class="shiftypad-spin-anim">
+        <line x1="12" y1="2" x2="12" y2="6"></line>
+        <line x1="12" y1="18" x2="12" y2="22"></line>
+        <line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line>
+        <line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line>
+        <line x1="2" y1="12" x2="6" y2="12"></line>
+        <line x1="18" y1="12" x2="22" y2="12"></line>
+        <line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line>
+        <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
+      </g>
+    </svg>
+    <span id="shiftypad-scrape-text">Scraping in progress... 0%</span>
+  `;
+  document.body.appendChild(spinner);
 
-  console.log(`🔍 Buttons found: ${buttons.length}`);
+  try {
+    const buttons = Array.from(
+      document.querySelectorAll<HTMLSpanElement>(
+        "table tbody tr td span[data-cname='svg-icon']"
+      )
+    );
 
-  const finalResult: PlayerRaidResult[] = [];
+    console.log(`🔍 Buttons found: ${buttons.length}`);
 
-  for (let i = 0; i < buttons.length; i++) {
-    if (stopRequested) {break;}
+    const finalResult: PlayerRaidResult[] = [];
 
-    const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
+    for (let i = 0; i < buttons.length; i++) {
+      if (stopRequested) {break;}
 
-    console.log(`💥 Click ${i + 1}/${buttons.length} (Expected: ${expectedPlayerName})`);
-    buttons[i].click();
+      const progress = Math.round((i / buttons.length) * 100);
+      const textEl = document.getElementById("shiftypad-scrape-text");
+      if (textEl) {
+        textEl.textContent = `Scraping in progress... ${progress}%`;
+      }
 
-    const modal = await waitForModalAppear();
-    if (!modal) {
-      console.warn("⚠️ Modal not found");
-      continue;
-    }
+      const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
 
-    let playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
-    let waitAttempts = 0;
+      console.log(`💥 Click ${i + 1}/${buttons.length} (Expected: ${expectedPlayerName})`);
+      buttons[i].click();
+
+      const modal = await waitForModalAppear();
+      if (!modal) {
+        console.warn("⚠️ Modal not found");
+        continue;
+      }
+
+      let playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
+      let waitAttempts = 0;
     
-    // Wait for Vue to patch the modal for the new player (Text updates)
-    while (waitAttempts < 25 && expectedPlayerName && playerName !== expectedPlayerName) {
-      await sleepMs(20); // Super fast check
-      playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
-      waitAttempts++;
-    }
+      // Wait for Vue to patch the modal for the new player (Text updates)
+      while (waitAttempts < 25 && expectedPlayerName && playerName !== expectedPlayerName) {
+        await sleepMs(20); // Super fast check
+        playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
+        waitAttempts++;
+      }
 
-    console.log(`👤 Player: ${playerName}. Extracting data...`);
+      console.log(`👤 Player: ${playerName}. Extracting data...`);
 
-    const rows = extractRowsFromModal(modal);
-    console.log("📦 Extracted rows:", rows);
+      const rows = extractRowsFromModal(modal);
+      console.log("📦 Extracted rows:", rows);
 
-    // SYNCHRO (LOG + APPLY)
-    const firstCard = modal.querySelector<HTMLElement>(".av .relative");
+      // SYNCHRO (LOG + APPLY)
+      const firstCard = modal.querySelector<HTMLElement>(".av .relative");
 
-    let debugLvText: string | undefined;
-    let synchro = 0;
+      let debugLvText: string | undefined;
+      let synchro = 0;
 
-    if (firstCard) {
-      const lvEl = Array.from(firstCard.querySelectorAll("div"))
-        .find(el => /^LV\.\d+/.test(el.textContent?.trim() ?? ""));
+      if (firstCard) {
+        const lvEl = Array.from(firstCard.querySelectorAll("div"))
+          .find(el => /^LV\.\d+/.test(el.textContent?.trim() ?? ""));
 
-      debugLvText = lvEl?.textContent?.trim();
+        debugLvText = lvEl?.textContent?.trim();
 
-      if (debugLvText) {
-        synchro = parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
+        if (debugLvText) {
+          synchro = parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
+        }
+      }
+
+      console.log("LV FOUND:", debugLvText, "=>", synchro);
+
+      const total_attempt = rows.length;
+      const total_damage = rows.reduce((sum, r) => sum + (r.damage || 0), 0);
+
+      function formatToB(num: number): string {
+        return (num / 1_000_000_000).toFixed(3).replace(/\.?0+$/, "") + "B";
+      }
+
+      finalResult.push({
+        player: playerName,
+        synchro,
+        total_attempt,
+        total_damage,
+        total_damage_text: formatToB(total_damage),
+        rows,
+      });
+
+      const closed = await closeModal(modal);
+
+      if (closed) {
+        console.log(`✅ Modal ${i + 1} closed. Waiting 500ms...`);
+        await sleepMs(500);
+      } else {
+        console.warn(`⚠️ Modal ${i + 1} failed to close cleanly. Proceeding anyway.`);
       }
     }
 
-    console.log("LV FOUND:", debugLvText, "=>", synchro);
+    console.log("✅ SCRAPE DONE");
+    console.log("📊 FINAL JSON RESULT:");
+    console.table(finalResult);
 
-    const total_attempt = rows.length;
-    const total_damage = rows.reduce((sum, r) => sum + (r.damage || 0), 0);
+    if (isUnionRaidPage()) {
+      const seasonText = passedSeasonText || getCurrentSeasonText();
+      const seasonKey = passedSeasonKey || seasonTextToKey(seasonText);
 
-    function formatToB(num: number): string {
-      return (num / 1_000_000_000).toFixed(3).replace(/\.?0+$/, "") + "B";
-    }
-
-    finalResult.push({
-      player: playerName,
-      synchro,
-      total_attempt,
-      total_damage,
-      total_damage_text: formatToB(total_damage),
-      rows,
-    });
-
-    const closed = await closeModal(modal);
-
-    if (closed) {
-      console.log(`✅ Modal ${i + 1} closed. Waiting 500ms...`);
-      await sleepMs(500);
-    } else {
-      console.warn(`⚠️ Modal ${i + 1} failed to close cleanly. Proceeding anyway.`);
-    }
-  }
-
-  console.log("✅ SCRAPE DONE");
-  console.log("📊 FINAL JSON RESULT:");
-  console.table(finalResult);
-
-  if (isUnionRaidPage()) {
-    const seasonText = passedSeasonText || getCurrentSeasonText();
-    const seasonKey = passedSeasonKey || seasonTextToKey(seasonText);
-
-    const seasonedKey = getSeasonedCacheKey(seasonKey);
-    if (!seasonedKey) {
-      console.error("[Content] Failed to resolve seasoned key, cannot save data.");
-      alert("Error: Could not detect season. Data was not saved.");
-      return;
-    }
-    const cacheKey = `ALL_UNION_RAID_DAMAGE_DATA_${seasonedKey}`;
-    const unionKey = `UNION_${seasonedKey}`;
-    const union = scrapeUnionName();
-    console.log("INILAH modifier", cacheKey);
-
-    localStorage.setItem(
-      cacheKey,
-      JSON.stringify(finalResult, null, 2)
-    );
-
-    chrome.storage.local.set(
-      {
-        [cacheKey]: finalResult,
-        [unionKey]: { union, seasonKey, seasonText, timestamp: Date.now() }
-      },
-      () => {
-        console.log(`[Content] 💾 SAVED ${cacheKey}:`, finalResult.length);
+      const seasonedKey = getSeasonedCacheKey(seasonKey);
+      if (!seasonedKey) {
+        console.error("[Content] Failed to resolve seasoned key, cannot save data.");
+        alert("Error: Could not detect season. Data was not saved.");
+        return;
       }
-    );
+      const cacheKey = `ALL_UNION_RAID_DAMAGE_DATA_${seasonedKey}`;
+      const unionKey = `UNION_${seasonedKey}`;
+      const union = scrapeUnionName();
+      console.log("INILAH modifier", cacheKey);
 
-    console.log("💾 JSON SAVED TO STORAGE");
-    alert("Scrape complete! Data saved to storage.");
+      localStorage.setItem(
+        cacheKey,
+        JSON.stringify(finalResult, null, 2)
+      );
+
+      chrome.storage.local.set(
+        {
+          [cacheKey]: finalResult,
+          [unionKey]: { union, seasonKey, seasonText, timestamp: Date.now() }
+        },
+        () => {
+          console.log(`[Content] 💾 SAVED ${cacheKey}:`, finalResult.length);
+        }
+      );
+
+      console.log("💾 JSON SAVED TO STORAGE");
+      alert("Scrape complete! Data saved to storage.");
+    }
+  } finally {
+    spinner.remove();
+    scrapingInProgress = false;
   }
-
-  scrapingInProgress = false;
 }
 
 /**
