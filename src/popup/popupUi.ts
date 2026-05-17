@@ -1,6 +1,6 @@
 import { PopupState } from "../types";
 import { renderTable } from "./popupRender";
-import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart } from "./popupCharts";
+import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart, renderLimitBreaksCpChart } from "./popupCharts";
 
 /**
  * Sets up sorting functionality for the table headers in the popup.
@@ -120,9 +120,13 @@ export function setupToggleButtons(state: PopupState): void {
         } else {
           state.limitBreaksJsonOutput.innerHTML = htmlContent;
         }
+        state.currentLimitBreaksData = data;
 
-        state.limitBreaksRawJsonOutput.textContent = JSON.stringify(data, null, 2);
-
+        if (document.getElementById("btnLimitBreaksCp")?.classList.contains("active")) {
+          setTimeout(() => {
+            void renderLimitBreaksCpChart(state, data);
+          }, 10);
+        }
         state.limitBreaksSearch.oninput = (e) => {
           const filter = (e.target as HTMLInputElement).value.toLowerCase();
           const players = state.limitBreaksJsonOutput.querySelectorAll(".limit-break-player");
@@ -140,25 +144,33 @@ export function setupToggleButtons(state: PopupState): void {
   };
 
   const btnLimitBreaksHtml = document.getElementById("btnLimitBreaksHtml");
-  const btnLimitBreaksJson = document.getElementById("btnLimitBreaksJson");
+  const btnLimitBreaksCp = document.getElementById("btnLimitBreaksCp");
   
-  if (btnLimitBreaksHtml && btnLimitBreaksJson) {
+  if (btnLimitBreaksHtml && btnLimitBreaksCp) {
     btnLimitBreaksHtml.onclick = () => {
       btnLimitBreaksHtml.classList.add("active");
-      btnLimitBreaksJson.classList.remove("active");
+      btnLimitBreaksCp.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "block";
       state.limitBreaksSearch.style.display = "block";
-      const rawOutput = document.getElementById("limitBreaksRawJsonOutput");
-      if (rawOutput) {rawOutput.style.display = "none";}
+      if (state.limitBreaksCpChartOutput) {
+        state.limitBreaksCpChartOutput.style.display = "none";
+      }
     };
 
-    btnLimitBreaksJson.onclick = () => {
-      btnLimitBreaksJson.classList.add("active");
+    btnLimitBreaksCp.onclick = () => {
+      btnLimitBreaksCp.classList.add("active");
       btnLimitBreaksHtml.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "none";
       state.limitBreaksSearch.style.display = "none";
-      const rawOutput = document.getElementById("limitBreaksRawJsonOutput");
-      if (rawOutput) {rawOutput.style.display = "block";}
+      if (state.limitBreaksCpChartOutput) {
+        state.limitBreaksCpChartOutput.style.display = "block";
+        if (state.currentLimitBreaksData) {
+          const dataToRender = state.currentLimitBreaksData;
+          setTimeout(() => {
+            void renderLimitBreaksCpChart(state, dataToRender);
+          }, 10);
+        }
+      }
     };
   }
 

@@ -96,7 +96,7 @@ type PopupState = {
   chartTopDrawerContainer: HTMLElement;
   chartLimitBreaksContainer: HTMLElement;
   limitBreaksJsonOutput: HTMLElement;
-  limitBreaksRawJsonOutput: HTMLElement;
+  limitBreaksCpChartOutput: HTMLElement;
   limitBreaksSearch: HTMLInputElement;
   btnTable: HTMLElement;
   btnChart: HTMLElement;
@@ -130,11 +130,13 @@ type PopupState = {
   apexChartAvg: ApexChartInstance | null;
   apexChartAvgDamage: ApexChartInstance | null;
   apexChartTopDrawer: ApexChartInstance | null;
+  apexChartLimitBreaksCp: ApexChartInstance | null;
   unionName: string;
   activeSeasonKey: string;
   activeSeasonText: string;
   loadingOverlay: HTMLElement;
   loadingText: HTMLElement;
+  currentLimitBreaksData: PlayerRaidResult[] | null;
 };
 
 type ChromeMessage =

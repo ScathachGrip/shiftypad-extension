@@ -34,7 +34,7 @@ class UnionRaidPopup {
   public btnLimitBreaks: HTMLElement;
   public chartLimitBreaksContainer: HTMLElement;
   public limitBreaksJsonOutput: HTMLElement;
-  public limitBreaksRawJsonOutput: HTMLElement;
+  public limitBreaksCpChartOutput: HTMLElement;
   public limitBreaksSearch: HTMLInputElement;
   public scrapeBtn: HTMLButtonElement | null;
   public output: HTMLElement | null;
@@ -60,11 +60,13 @@ class UnionRaidPopup {
   public apexChartAvg: ApexChartInstance | null = null;
   public apexChartAvgDamage: ApexChartInstance | null = null;
   public apexChartTopDrawer: ApexChartInstance | null = null;
+  public apexChartLimitBreaksCp: ApexChartInstance | null = null;
   public unionName: string = "";
   public activeSeasonKey: string = "";
   public activeSeasonText: string = "";
   public loadingOverlay!: HTMLElement;
   public loadingText!: HTMLElement;
+  public currentLimitBreaksData: import("./types").PlayerRaidResult[] | null = null;
 
   constructor() {
     const getEl = (id: string): HTMLElement => {
@@ -92,7 +94,7 @@ class UnionRaidPopup {
     this.btnLimitBreaks = getEl("btnLimitBreaks");
     this.chartLimitBreaksContainer = getEl("chartLimitBreaksContainer");
     this.limitBreaksJsonOutput = getEl("limitBreaksJsonOutput");
-    this.limitBreaksRawJsonOutput = getEl("limitBreaksRawJsonOutput");
+    this.limitBreaksCpChartOutput = getEl("limitBreaksCpChartOutput");
     this.limitBreaksSearch = getEl("limitBreaksSearch") as HTMLInputElement;
     this.scrapeBtn = document.getElementById("scrapeBtn") as HTMLButtonElement | null;
     this.output = document.getElementById("output");

@@ -1,4 +1,4 @@
-import { ApexChartOptions, ApexChartsConstructor, BossData, PlayerRaidResult, PopupState } from "../types";
+import { ApexChartOptions, ApexChartsConstructor, BossData, PlayerRaidResult, PopupState, NikkeHero } from "../types";
 import { getBossWeakness } from "../utils/modifier";
 import * as PopupUtils from "./popupUtils";
 
@@ -694,9 +694,98 @@ export function refreshVisibleCharts(state: PopupState): void {
     renderAvgDamageChart(state);
     return;
   }
+  if (state.chartLimitBreaksContainer.style.display === "flex") {
+    if (document.getElementById("btnLimitBreaksCp")?.classList.contains("active") && state.currentLimitBreaksData) {
+      void renderLimitBreaksCpChart(state, state.currentLimitBreaksData);
+    }
+    return;
+  }
   if (state.chartTopDrawerContainer.style.display === "block") {
     const isLow = state.btnResidualLow.classList.contains("active");
     renderTopDrawerChart(state, isLow ? "low" : "top");
+    return;
   }
+}
+
+/**
+ * Renders a bar chart showing the total Combat Power for each player.
+ */
+export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRaidResult[]): Promise<void> {
+  if (state.apexChartLimitBreaksCp) {
+    await state.apexChartLimitBreaksCp.destroy();
+    state.apexChartLimitBreaksCp = null;
+  }
+
+  const cpData: { player: string; cp: number }[] = [];
+
+  data.forEach(playerResult => {
+    let totalCp = 0;
+    const uniqueHeroes = new Map<string, NikkeHero>();
+    
+    playerResult.rows.forEach(r => {
+      if (r.heroes) {
+        r.heroes.forEach(h => {
+          uniqueHeroes.set(h.avatarUrl, h);
+        });
+      }
+    });
+
+    uniqueHeroes.forEach(h => {
+      const cpNum = parseInt(String(h.combatPower).replace(/,/g, ""), 10) || 0;
+      totalCp += cpNum;
+    });
+
+    if (totalCp > 0) {
+      cpData.push({ player: playerResult.player, cp: totalCp });
+    }
+  });
+
+  cpData.sort((a, b) => b.cp - a.cp);
+
+  const labels = cpData.map(d => d.player);
+  const seriesData = cpData.map(d => d.cp);
+
+  const palette = PopupUtils.getChartColors();
+  const colors = palette
+    ? seriesData.map((_, i) => palette[i % palette.length])
+    : seriesData.map(() => "#5b6bff");
+
+  const options: ApexChartOptions = {
+    chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
+    series: [{ name: "Combat Power", data: seriesData }],
+    title: {
+      text: `${state.unionName || "Union"} - Total Combat Power`,
+      align: "center",
+      style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+    },
+    plotOptions: {
+      bar: { horizontal: false, distributed: true, columnWidth: "70%", borderRadius: 4, dataLabels: { position: "top" } }
+    },
+    xaxis: {
+      categories: labels,
+      tickAmount: labels.length,
+      tickPlacement: "on",
+      labels: { 
+        rotate: -30,
+        rotateAlways: true,
+        hideOverlappingLabels: false,
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 } 
+      }
+    },
+    yaxis: {
+      labels: { 
+        formatter: (val: number) => PopupUtils.formatNumber(val), 
+        style: { colors: PopupUtils.getAxisLabelColor() } 
+      }
+    },
+    colors: colors,
+    dataLabels: { enabled: false },
+    tooltip: { theme: document.body.classList.contains("theme-dark") ? "dark" : "light" },
+    grid: { borderColor: PopupUtils.getGridColor() },
+    legend: { show: false }
+  };
+
+  state.apexChartLimitBreaksCp = new ApexCharts(state.limitBreaksCpChartOutput, options);
+  await state.apexChartLimitBreaksCp.render();
 }
 
