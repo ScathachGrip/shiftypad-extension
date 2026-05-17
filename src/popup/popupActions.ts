@@ -275,11 +275,18 @@ export function setupThemeToggle(state: PopupState): void {
   });
 
   state.btnThemeToggle.onclick = () => {
+    const scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
     const isDark = document.body.classList.toggle("theme-dark");
     const theme = isDark ? "dark" : "light";
     void chrome.storage.local.set({ uiTheme: theme });
     state.btnThemeToggle.textContent = `Theme: ${isDark ? "Dark" : "Light"}`;
     void refreshVisibleCharts(state);
+    
+    // Restore scroll position after chart destruction/creation layout shift
+    setTimeout(() => {
+      document.documentElement.scrollTop = scrollPos;
+      document.body.scrollTop = scrollPos;
+    }, 10);
   };
 }
 

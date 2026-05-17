@@ -480,7 +480,9 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
         }
 
         let finalTier = `LB ${starCount}`;
-        if (coreText !== "0") {
+        if (coreText === "MAX") {
+          finalTier = "MAX";
+        } else if (coreText !== "0") {
           finalTier = `Core ${coreText}`;
         }
 

@@ -1,6 +1,6 @@
 import { PopupState } from "../types";
 import { renderTable } from "./popupRender";
-import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart, renderLimitBreaksCpChart } from "./popupCharts";
+import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart, renderLimitBreaksCpChart, renderLimitBreaksSynchroChart } from "./popupCharts";
 
 /**
  * Sets up sorting functionality for the table headers in the popup.
@@ -12,7 +12,7 @@ export function setupSorting(state: PopupState): void {
   document.querySelectorAll<HTMLElement>(".header > div").forEach(h => {
     h.onclick = () => {
       const key = h.dataset.key as keyof typeof state.rows[number] | undefined;
-      if (!key) {return;}
+      if (!key) { return; }
       state.sortDir = state.sortKey === key ? (state.sortDir === "asc" ? "desc" : "asc") : "desc";
       state.sortKey = key;
       document.querySelectorAll(".header > div").forEach(x => x.classList.remove("sort-asc", "sort-desc"));
@@ -66,12 +66,12 @@ export function setupToggleButtons(state: PopupState): void {
 
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       const url = tabs[0]?.url;
-      if (!url) {return;}
-      
+      if (!url) { return; }
+
       const { getCacheKeyFromUrl } = require("./popupUtils");
       const baseKey = getCacheKeyFromUrl(url);
       const cacheKey = `ALL_UNION_RAID_DAMAGE_DATA_${baseKey}__${state.activeSeasonKey}`;
-      
+
       chrome.storage.local.get(cacheKey, (res) => {
         const data = res[cacheKey] as import("../types").PlayerRaidResult[];
         if (!data || !Array.isArray(data)) {
@@ -88,10 +88,10 @@ export function setupToggleButtons(state: PopupState): void {
               allHeroes.push(...r.heroes);
             }
           });
-           
+
           // Unique heroes
           const uniqueHeroes = Array.from(new Map(allHeroes.map(h => [h.avatarUrl, h])).values());
-           
+
           if (uniqueHeroes.length === 0) {
             return;
           }
@@ -114,7 +114,7 @@ export function setupToggleButtons(state: PopupState): void {
             </div>
           `;
         });
-        
+
         if (!htmlContent) {
           state.limitBreaksJsonOutput.innerHTML = "<div style='padding: 10px; color: var(--text);'>No hero data found for this season.</div>";
         } else {
@@ -145,23 +145,31 @@ export function setupToggleButtons(state: PopupState): void {
 
   const btnLimitBreaksHtml = document.getElementById("btnLimitBreaksHtml");
   const btnLimitBreaksCp = document.getElementById("btnLimitBreaksCp");
-  
-  if (btnLimitBreaksHtml && btnLimitBreaksCp) {
+  const btnLimitBreaksSynchro = document.getElementById("btnLimitBreaksSynchro");
+  const btnLimitBreaksOverload = document.getElementById("btnLimitBreaksOverload");
+
+  if (btnLimitBreaksHtml && btnLimitBreaksCp && btnLimitBreaksSynchro && btnLimitBreaksOverload) {
     btnLimitBreaksHtml.onclick = () => {
       btnLimitBreaksHtml.classList.add("active");
       btnLimitBreaksCp.classList.remove("active");
+      btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksOverload.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "block";
       state.limitBreaksSearch.style.display = "block";
-      if (state.limitBreaksCpChartOutput) {
-        state.limitBreaksCpChartOutput.style.display = "none";
-      }
+      if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
+      if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
     };
 
     btnLimitBreaksCp.onclick = () => {
       btnLimitBreaksCp.classList.add("active");
       btnLimitBreaksHtml.classList.remove("active");
+      btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksOverload.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "none";
       state.limitBreaksSearch.style.display = "none";
+      if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
       if (state.limitBreaksCpChartOutput) {
         state.limitBreaksCpChartOutput.style.display = "block";
         if (state.currentLimitBreaksData) {
@@ -170,6 +178,46 @@ export function setupToggleButtons(state: PopupState): void {
             void renderLimitBreaksCpChart(state, dataToRender);
           }, 10);
         }
+      }
+    };
+
+    btnLimitBreaksSynchro.onclick = () => {
+      btnLimitBreaksSynchro.classList.add("active");
+      btnLimitBreaksHtml.classList.remove("active");
+      btnLimitBreaksCp.classList.remove("active");
+      btnLimitBreaksOverload.classList.remove("active");
+      state.limitBreaksJsonOutput.style.display = "none";
+      state.limitBreaksSearch.style.display = "none";
+      if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
+      if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
+      if (state.limitBreaksSynchroChartOutput) {
+        state.limitBreaksSynchroChartOutput.style.display = "block";
+        if (state.currentLimitBreaksData) {
+          const dataToRender = state.currentLimitBreaksData;
+          setTimeout(() => {
+            void renderLimitBreaksSynchroChart(state, dataToRender);
+          }, 10);
+        }
+      }
+    };
+
+    btnLimitBreaksOverload.onclick = () => {
+      btnLimitBreaksOverload.classList.add("active");
+      btnLimitBreaksHtml.classList.remove("active");
+      btnLimitBreaksCp.classList.remove("active");
+      btnLimitBreaksSynchro.classList.remove("active");
+      state.limitBreaksJsonOutput.style.display = "none";
+      state.limitBreaksSearch.style.display = "none";
+      if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
+      if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksOverloadOutput) {
+        state.limitBreaksOverloadOutput.style.display = "block";
+        state.limitBreaksOverloadOutput.innerHTML = `
+          <div class="empty residual-note">
+            <h4>Overload Stats</h4>
+            <p>Overload stats are currently not available due to per-player privacy settings.</p>
+          </div>
+        `;
       }
     };
   }

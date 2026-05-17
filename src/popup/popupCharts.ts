@@ -24,7 +24,7 @@ export function renderAvgDamageChart(state: PopupState): void {
   const avg = data.reduce((a, b) => a + b, 0) / data.length;
   const avgLine = data.map(() => avg);
 
-  if (state.apexChartAvgDamage) {void state.apexChartAvgDamage.destroy();}
+  if (state.apexChartAvgDamage) { void state.apexChartAvgDamage.destroy(); }
 
   const options: ApexChartOptions = {
     chart: { type: "area", height: 420, toolbar: { show: false } },
@@ -141,7 +141,7 @@ export function renderTopDrawerChart(state: PopupState, order: "top" | "low" = "
       const totals = slice5.map((p) => totalDamage(p));
       const synchros = slice5.map((p) => p.synchro);
 
-      if (state.apexChartTopDrawer) {void state.apexChartTopDrawer.destroy();}
+      if (state.apexChartTopDrawer) { void state.apexChartTopDrawer.destroy(); }
 
       const isLow = order === "low";
       const colors = slice5.map((_, i) => {
@@ -301,7 +301,7 @@ export function renderAvgSynchroChart(state: PopupState): void {
   const series = nonZeroBuckets.map(b => b.count);
   const dominant = nonZeroBuckets.reduce((best, cur) => (cur.count > best.count ? cur : best), nonZeroBuckets[0]);
 
-  if (state.apexChartAvg) {void state.apexChartAvg.destroy();}
+  if (state.apexChartAvg) { void state.apexChartAvg.destroy(); }
 
   const palette = PopupUtils.getChartColors();
   const colors = palette
@@ -393,7 +393,7 @@ export function renderChartBoss(state: PopupState): void {
           const playerName = playerData.player;
           const playerSynchro = Number(playerData.synchro ?? 0);
           for (const row of playerData.rows) {
-            if (!bossMap[row.boss]) {bossMap[row.boss] = {};}
+            if (!bossMap[row.boss]) { bossMap[row.boss] = {}; }
             const prev = bossMap[row.boss][playerName]?.damage ?? 0;
             bossMap[row.boss][playerName] = {
               damage: prev + row.damage,
@@ -412,7 +412,7 @@ export function renderChartBoss(state: PopupState): void {
         bossArray = bossArray.slice(0, 5);
 
         const container = document.querySelector<HTMLDivElement>("#chartBossContainer");
-        if (!container) {return;}
+        if (!container) { return; }
         container.innerHTML = "";
 
         for (const bossData of bossArray) {
@@ -517,7 +517,7 @@ export function renderChartFromRows(state: PopupState): void {
     .replace(/^Union:\s*/i, "")
     .trim();
 
-  if (state.apexChart) {void state.apexChart.destroy();}
+  if (state.apexChart) { void state.apexChart.destroy(); }
 
   const palette = PopupUtils.getChartColors();
   const colors = palette
@@ -697,6 +697,8 @@ export function refreshVisibleCharts(state: PopupState): void {
   if (state.chartLimitBreaksContainer.style.display === "flex") {
     if (document.getElementById("btnLimitBreaksCp")?.classList.contains("active") && state.currentLimitBreaksData) {
       void renderLimitBreaksCpChart(state, state.currentLimitBreaksData);
+    } else if (document.getElementById("btnLimitBreaksSynchro")?.classList.contains("active") && state.currentLimitBreaksData) {
+      void renderLimitBreaksSynchroChart(state, state.currentLimitBreaksData);
     }
     return;
   }
@@ -721,7 +723,7 @@ export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRa
   data.forEach(playerResult => {
     let totalCp = 0;
     const uniqueHeroes = new Map<string, NikkeHero>();
-    
+
     playerResult.rows.forEach(r => {
       if (r.heroes) {
         r.heroes.forEach(h => {
@@ -754,7 +756,7 @@ export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRa
     chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
     series: [{ name: "Combat Power", data: seriesData }],
     title: {
-      text: `${state.unionName || "Union"} - Total Combat Power`,
+      text: `${state.unionName || "Union"} - Combat Power`,
       align: "center",
       style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
     },
@@ -765,17 +767,17 @@ export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRa
       categories: labels,
       tickAmount: labels.length,
       tickPlacement: "on",
-      labels: { 
+      labels: {
         rotate: -30,
         rotateAlways: true,
         hideOverlappingLabels: false,
-        style: { colors: colors, fontSize: "11px", fontWeight: 600 } 
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
       }
     },
     yaxis: {
-      labels: { 
-        formatter: (val: number) => PopupUtils.formatNumber(val), 
-        style: { colors: PopupUtils.getAxisLabelColor() } 
+      labels: {
+        formatter: (val: number) => PopupUtils.formatNumber(val),
+        style: { colors: PopupUtils.getAxisLabelColor() }
       }
     },
     colors: colors,
@@ -789,3 +791,62 @@ export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRa
   await state.apexChartLimitBreaksCp.render();
 }
 
+
+
+/**
+ * Renders a bar chart showing the Synchro Level for each player.
+ */
+export async function renderLimitBreaksSynchroChart(state: import("../types").PopupState, data: import("../types").PlayerRaidResult[]): Promise<void> {
+  if (state.apexChartLimitBreaksSynchro) {
+    await state.apexChartLimitBreaksSynchro.destroy();
+    state.apexChartLimitBreaksSynchro = null;
+  }
+
+  const synchroData = data.map(r => ({ player: r.player, synchro: r.synchro })).sort((a, b) => b.synchro - a.synchro);
+
+  const labels = synchroData.map(d => d.player);
+  const seriesData = synchroData.map(d => d.synchro);
+
+  const palette = PopupUtils.getChartColors();
+  const colors = palette
+    ? seriesData.map((_, i) => palette[i % palette.length])
+    : seriesData.map(() => "#5b6bff");
+
+  const options: import("../types").ApexChartOptions = {
+    chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
+    series: [{ name: "Synchro Level", data: seriesData }],
+    title: {
+      text: `${state.unionName || "Union"} - Synchro Level`,
+      align: "center",
+      style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+    },
+    plotOptions: {
+      bar: { horizontal: false, distributed: true, columnWidth: "70%", borderRadius: 4, dataLabels: { position: "top" } }
+    },
+    xaxis: {
+      categories: labels,
+      tickAmount: labels.length,
+      tickPlacement: "on",
+      labels: {
+        rotate: -30,
+        rotateAlways: true,
+        hideOverlappingLabels: false,
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: (val: number) => PopupUtils.formatNumber(val),
+        style: { colors: PopupUtils.getAxisLabelColor() }
+      }
+    },
+    colors: colors,
+    dataLabels: { enabled: false },
+    tooltip: { theme: document.body.classList.contains("theme-dark") ? "dark" : "light" },
+    grid: { borderColor: PopupUtils.getGridColor() },
+    legend: { show: false }
+  };
+
+  state.apexChartLimitBreaksSynchro = new ApexCharts(state.limitBreaksSynchroChartOutput, options);
+  await state.apexChartLimitBreaksSynchro.render();
+}

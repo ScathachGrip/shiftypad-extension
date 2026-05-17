@@ -644,18 +644,16 @@ const POPUP_HTML = `
     </div>
     <div class="tombol">
       <div class="row-top">
-        <button id="btnTable" class="active">📝Records</button>
-        <button id="btnChart">⚔️ Summary</button>
-        <button id="btnChartBoss">⚔️ Breakdown</button>
-        <button id="btnAvgSynchro">🧠 Avg Synchro</button>
-        <button id="btnAvgDamage">📈 Avg Damage</button>
-        <button id="btnTopDrawer">✨ Residual</button>
+        <button id="btnTable" class="active">Records</button>
+        <button id="btnChart">Summary</button>
+        <button id="btnChartBoss">Boss Breakdown</button>
+        <button id="btnAvgSynchro">Avg Synchro</button>
+        <button id="btnAvgDamage">Avg Damage</button>
+        <button id="btnTopDrawer">Residuals</button>
       </div>
 
       <div class="row-bottom">
-        <button id="btnLimitBreaks">Limit breaks</button>
-        <button id="themeToggle">Theme: Light</button>
-        <button id="siteSettings">DisabledBackground</button>
+        <button id="btnLimitBreaks">Members Breakdown</button>
         <div class="dropdown" id="exportDropdown">
           <button id="exportJson" class="dropdown-toggle">📦 Export</button>
           <div class="dropdown-menu" id="exportMenu">
@@ -663,6 +661,8 @@ const POPUP_HTML = `
             <button id="exportJsonBtn">Export to JSON</button>
           </div>
         </div>
+        <button id="siteSettings">DisabledBackground</button>
+        <button id="themeToggle">Theme: Light</button>
         <button id="clearData">🗑️ Clear Data</button>
       </div>
     </div>
@@ -681,12 +681,16 @@ const POPUP_HTML = `
 
   <div id="chartLimitBreaksContainer" style="display:none; padding: 0 4px; flex-direction: column; max-height: 500px;">
     <div class="segmented-control" style="margin-bottom: 12px; flex-shrink: 0;">
-      <button id="btnLimitBreaksHtml" class="segmented-btn active">HTML View</button>
+      <button id="btnLimitBreaksHtml" class="segmented-btn active">Limit Breaks</button>
       <button id="btnLimitBreaksCp" class="segmented-btn">Combat power</button>
+      <button id="btnLimitBreaksSynchro" class="segmented-btn">Synchro</button>
+      <button id="btnLimitBreaksOverload" class="segmented-btn">Overload stats</button>
     </div>
     <input type="text" id="limitBreaksSearch" placeholder="Search by nickname..." style="margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); outline: none; width: 100%; font-size: 13px; flex-shrink: 0;">
     <div id="limitBreaksJsonOutput" class="hide-scrollbar" style="overflow-y: auto; flex-grow: 1;"></div>
     <div id="limitBreaksCpChartOutput" style="display: none; width: 100%;"></div>
+    <div id="limitBreaksSynchroChartOutput" style="display: none; width: 100%;"></div>
+    <div id="limitBreaksOverloadOutput" style="display: none; padding: 20px; width: 100%;"></div>
   </div>
 
   <div id="chartContainer" style="display:none;">
