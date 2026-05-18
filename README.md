@@ -1,12 +1,13 @@
-![Open Source at Scathach](astro/public/project/shiftypad.png) 
-
 <div align="center">
+<a href="#"><img width="500" src="astro/public/project/extension.png" alt="extension"></a>
+
+<h4 align="center">Blablalink extension with Union Raid data focused.</h4>
 <p align="center">
 	<a href="https://github.com/ScathachGrip/shiftypad-extension/actions/workflows/release.yml"><img src="https://github.com/ScathachGrip/shiftypad-extension/actions/workflows/release.yml/badge.svg"></a>
 	<a href="https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension"><img src="https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension/maintainability.svg" alt="Maintainability" /></a>
 </p>
 
-Blablalink extension with Union Raid data focused — Pull Union Raid data with ease. interactive visualizations, clarity to every metrics, season-aware cache, and one-click export.
+Union Raid data, right where you need it — Pull Union Raid data with ease. interactive visualizations, clarity to every metrics, season-aware cache, and one-click export.
 
 <a href="https://shiftypad.scathach.id/">Installation</a> •
 <a href="https://github.com/ScathachGrip/shiftypad-extension/blob/master/CONTRIBUTING.md">Contributing</a> •
