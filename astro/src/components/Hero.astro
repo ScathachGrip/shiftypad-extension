@@ -26,8 +26,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
           >right where you need it.</span>
       </h1>
       <p class="hero-desc">
-        Blablalink Extension — Pull Union Raid data <span style="font-weight: 900">with ease.</span> Dive deep into your performance
-        with rich, interactive visualizations, clarity to every metric, lossless season-aware cache, and <span style="font-weight: 900">one-click export</span>.
+        Blablalink Extension — Pull Union Raid data <span style="font-weight: 900">with ease.</span> interactive visualizations, clarity to every metrics, season-aware cache, and <span style="font-weight: 900">one-click export</span>.
       </p>
       <div class="hero-actions">
         <a href="#installation" class="hero-btn btn-primary">
@@ -331,18 +330,10 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
 
 <script>
   const baseUrl = import.meta.env.BASE_URL;
-  const imgElement = document.getElementById("heroShowcaseImage");
+  const imgElement = document.getElementById("heroShowcaseImage") as HTMLImageElement | null;
   if (imgElement) {
     const totalImages = 12;
     let currentNum = 1;
-    
-    // Preload all showcase images so there is zero download delay
-    const preloadedImages = [];
-    for (let i = 1; i <= totalImages; i++) {
-      const img = new Image();
-      img.src = `${baseUrl}showcase/${i}.webp`;
-      preloadedImages.push(img);
-    }
     
     setInterval(() => {
       // Pick a random image from 1 to 12 (different from current image)
