@@ -25,6 +25,7 @@ Union Raid data, right where you need it — Pull Union Raid data with ease. int
     - [MemberRow](#data-contracts)
     - [PlayerRaidResult](#data-contracts)
     - [GetMembersResponse](#data-contracts)
+    - [Cache keys](#data-contracts)
     - [IDENTIFIER](#data-contracts)
     - [SEASON_KEY](#data-contracts)
   - [Testing](#testing)
@@ -33,22 +34,80 @@ Union Raid data, right where you need it — Pull Union Raid data with ease. int
     - [ApexCharts](#Apexcharts)
   - [Monolith](#)
     - [shiftypad-extension](/src/)
-    - [shiftypad-extension#astro](/astro/)
+    - [shiftypad-extension/astro](/astro/)
   - [CLosing remarks](/CLOSING_REMARKS.md)
   - [Legal](#legal)
 
 
 ## The problem
-Lorem ipsum dolor sit amet
+Managing and analyzing Union Raid data in NIKKE (`blablalink.com/shiftyspad/union-raid`) is highly tedious and manual:
+- **Lack of Native Visualization:** The platform does not offer intuitive graphs, charts, or comparison tools to easily visualize member contributions or boss damage distribution.
+- **No Historical Tracking:** There is no built-in mechanism to track historical raid performance or view data across different seasons without manual exports or screenshots.
+- **Inability to Assess Player Efficiency:** Raw damage numbers do not paint a full picture. Factors like player synchro levels significantly influence contribution, making it hard to identify who is performing efficiently relative to their level.
+- **Time-Consuming Scraping:** Manually collecting and consolidating individual player attempt records across all members is highly repetitive and prone to human error.
+
 
 ## The solution
-Lorem ipsum dolor sit amet
+**shiftypad-extension** is a powerful Manifest V3 Chrome extension designed to transform how Union leaders and players experience Union Raids. By automating data extraction and providing rich, local interactive analytics directly in your browser, it solves these headaches seamlessly:
+- **Instant Interactive Analytics:** A sleek displaying responsive visual reports powered by ApexCharts, including player rankings and residual damage.
+- **Automated DOM Scraping:** Injects safe page-side content scripts to scrape both summary (`MemberRow`) and detailed attempt-level raid results (`PlayerRaidResult[]`) instantly.
+- **Season-Aware Local Cache:** Automatically structures and caches all scraped data per season in `chrome.storage.local`, ensuring fast load times and preventing redundant DOM scraping.
+- **One-Click Exports:** Standardizes data exports for external planning or sheet integrations.
+- **True Efficiency Analysis (Residuals):** Uses an ordinary least squares (OLS) linear model (`expected_damage = a * synchro + b`) to rank players based on actual performance versus expected baseline, making it easy to identify high-performing members.
+
 
 ### Prerequisites
-Lorem ipsum dolor sit amet
+- [Bun](https://bun.sh) >= 1.3.13 or higher
 
-## Tests
-Lorem ipsum dolor sit amet
+## Architecture
 
-## Development
-Lorem ipsum dolor sit amet
+```
+src/                          Extension source code (TypeScript)
+  content.ts                  Page-side content
+  serviceWorker.ts            Background service worker (MV3)
+  popup.tsx                   Popup shell (React/TSX, HTML+CSS mount)
+  popupInit.ts                Popup state bootstrap and wiring
+  popup/                      Popup logic, split by concern
+    popupData.ts              Data fetching and caching
+    popupCharts.ts            ApexCharts rendering
+    popupActions.ts           User interaction handlers
+    popupRender.ts            DOM rendering
+    popupScrape.ts            Modal scraping control logic
+    popupUi.ts                UI element management
+    popupUtils.ts             Utility helpers
+  types.ts                    Shared type definitions
+  types/global.d.ts           Global ambient type declarations
+  utils/
+    modifier.ts               DOM parsing, scraping helpers, cache-key generation
+    logForwarder.ts           Console log forwarding to popup
+```
+
+## Data Contracts
+
+- Summary data is normalized to `MemberRow` (name, count, damage, synchroLevel).
+- Detailed scrape data uses `PlayerRaidResult[]` (player, synchro, attempts, damage per boss).
+- `GetMembersResponse` bundles union metadata (name, id) with seasonal context (key, text) and data payload.
+- Cache keys are deterministic and season-aware:
+  - Damage: `ALL_UNION_RAID_DAMAGE_DATA_<IDENTIFIER>__<SEASON_KEY>`
+  - Union metadata: `UNION_<IDENTIFIER>__<SEASON_KEY>`
+- `IDENTIFIER` is derived from the `openid` query parameter, falling back to the URL pathname.
+- `SEASON_KEY` is extracted from the season text in the DOM, falling back to `SEASON_CURRENT`.
+
+## Testing
+[![Code Coverage](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension/coverage.svg)](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension)  
+The current state testing is not done yet, you can see object scripts in file `package.json` or `/tests/` directory.
+
+## Debugging
+### Aegis SDK
+Blablalink uses Tencent's Aegis SDK for performance logging, error tracking, and telemetry monitoring on their frontend.
+- **Frontend Change Detection:** To prevent DOM structure changes from silently breaking the extension's DOM scrapers, the development environment utilizes the `bun run blablalink:version`.
+- **Telemetry Verification:** The script queries `blablalink.com` directly, parses the main entry script to locate the Aegis SDK version, release time, current Vite build slot, and content hash, and matches them against `aegisVersionCache.json`.
+
+### ApexCharts
+This extension uses ApexCharts to render modern, interactive data visualizations directly in the extension's popup dashboard.
+- **Local Sandbox Compliance:** Because Chrome Extension Manifest V3 enforces strict Content Security Policies (CSP) forbidding the execution of external/remote Javascript, ApexCharts is downloaded locally during the build stage using the `bun run download:apex` command (implemented in `ci/downloadApex.ts`). It retrieves the exact minified runtime version specified in `package.json` and bundles it directly into `dist/apexcharts.min.js`.
+
+## Legal
+This tool can be freely copied, modified, altered, distributed without any attribution whatsoever. However, if you feel
+like this tool deserves an attribution, mention it. It won't hurt anybody.
+> Licence: WTF.
