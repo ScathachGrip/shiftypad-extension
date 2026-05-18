@@ -254,7 +254,7 @@ class UnionRaidScraper {
    */
   private trackHardClick(e: MouseEvent): void {
     const target = e.target as HTMLElement | null;
-    if (!target) { return; }
+    if (!target || typeof target.closest !== "function") { return; }
     if (target.closest("#scrape-btn")) { return; }
     const raw = target.textContent?.replace(/\s+/g, " ").trim() ?? "";
     // console.log(`[LastClick] ${raw ? `"${raw}"` : "(no text)"}`);
@@ -389,7 +389,7 @@ class UnionRaidScraper {
 
   private trackSeasonClick(e: MouseEvent): void {
     const target = e.target as HTMLElement | null;
-    if (!target) { return; }
+    if (!target || typeof target.closest !== "function") { return; }
     const normalize = (val: string): string => val.replace(/\s+/g, " ").trim();
     const matchSeason = (val: string): string => {
       const m = val.match(/\[S\d+\]\s*\d{1,2}\/\d{1,2}\/\d{4}\s*\d{1,2}:\d{2}\s*-\s*\d{1,2}\/\d{1,2}\/\d{4}\s*\d{1,2}:\d{2}/i);
@@ -490,8 +490,9 @@ class UnionRaidScraper {
     // Preference: 
     // 1. Manually clicked/locked season
     // 2. DOM season
-    const targetSeasonKey = this.manualSeasonLocked ? this.selectedSeasonKey : liveSeasonKey;
-    const targetSeasonText = this.manualSeasonLocked ? this.selectedSeasonText : liveSeasonText;
+    // 3. Fallback to hydrated/selected season
+    const targetSeasonKey = this.manualSeasonLocked ? this.selectedSeasonKey : (liveSeasonKey || this.selectedSeasonKey);
+    const targetSeasonText = this.manualSeasonLocked ? this.selectedSeasonText : (liveSeasonText || this.selectedSeasonText);
 
     if (!targetSeasonKey) {
       console.error("[Scraping] Could not detect season key. Aborting.");

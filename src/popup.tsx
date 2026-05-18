@@ -467,6 +467,55 @@ body.theme-dark #chartAvgDummy .apexcharts-grid {
   justify-content: center;
 }
 
+.segmented-control {
+  display: flex;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+  box-shadow: inset 0 2px 6px rgba(0,0,0,0.04);
+}
+
+body.theme-dark .segmented-control {
+  background: rgba(0, 0, 0, 0.25);
+  box-shadow: inset 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.segmented-btn {
+  flex: 1;
+  background: transparent !important;
+  color: var(--muted) !important;
+  border: 1px solid transparent !important;
+  box-shadow: none !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-weight: 600 !important;
+  font-size: 11.5px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.segmented-btn:hover {
+  color: var(--text) !important;
+  background: var(--row-hover) !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.segmented-btn.active {
+  background: var(--surface) !important;
+  color: var(--text) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  border: 1px solid var(--border) !important;
+}
+
+body.theme-dark .segmented-btn.active {
+  background: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4) !important;
+  border-color: rgba(255,255,255,0.15) !important;
+  color: #fff !important;
+}
+
 .dropdown {
   position: relative;
   display: inline-flex;
@@ -568,6 +617,14 @@ body.theme-dark #chartAvgDummy .apexcharts-grid {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
 }
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
 `;
 
 const POPUP_HTML = `
@@ -587,17 +644,16 @@ const POPUP_HTML = `
     </div>
     <div class="tombol">
       <div class="row-top">
-        <button id="btnTable" class="active">📝Records</button>
-        <button id="btnChart">⚔️ Summary</button>
-        <button id="btnChartBoss">⚔️ Breakdown</button>
-        <button id="btnAvgSynchro">🧠 Avg Synchro</button>
-        <button id="btnAvgDamage">📈 Avg Damage</button>
-        <button id="btnTopDrawer">✨ Residual</button>
+        <button id="btnTable" class="active">Records</button>
+        <button id="btnChart">Summary</button>
+        <button id="btnChartBoss">Boss Breakdown</button>
+        <button id="btnAvgSynchro">Avg Synchro</button>
+        <button id="btnAvgDamage">Avg Damage</button>
+        <button id="btnTopDrawer">Residuals</button>
       </div>
 
       <div class="row-bottom">
-        <button id="themeToggle">Theme: Light</button>
-        <button id="siteSettings">DisabledBackground</button>
+        <button id="btnLimitBreaks">Members Breakdown</button>
         <div class="dropdown" id="exportDropdown">
           <button id="exportJson" class="dropdown-toggle">📦 Export</button>
           <div class="dropdown-menu" id="exportMenu">
@@ -605,6 +661,8 @@ const POPUP_HTML = `
             <button id="exportJsonBtn">Export to JSON</button>
           </div>
         </div>
+        <button id="siteSettings">DisabledBackground</button>
+        <button id="themeToggle">Theme: Light</button>
         <button id="clearData">🗑️ Clear Data</button>
       </div>
     </div>
@@ -619,6 +677,20 @@ const POPUP_HTML = `
       <div class="num" data-key="damage">Damage</div>
     </div>
     <div id="list"></div>
+  </div>
+
+  <div id="chartLimitBreaksContainer" style="display:none; padding: 0 4px; flex-direction: column; max-height: 500px;">
+    <div class="segmented-control" style="margin-bottom: 12px; flex-shrink: 0;">
+      <button id="btnLimitBreaksHtml" class="segmented-btn active">Limit Breaks</button>
+      <button id="btnLimitBreaksCp" class="segmented-btn">Combat power</button>
+      <button id="btnLimitBreaksSynchro" class="segmented-btn">Synchro</button>
+      <button id="btnLimitBreaksOverload" class="segmented-btn">Overload stats</button>
+    </div>
+    <input type="text" id="limitBreaksSearch" placeholder="Search by nickname..." style="margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); outline: none; width: 100%; font-size: 13px; flex-shrink: 0;">
+    <div id="limitBreaksJsonOutput" class="hide-scrollbar" style="overflow-y: auto; flex-grow: 1;"></div>
+    <div id="limitBreaksCpChartOutput" style="display: none; width: 100%;"></div>
+    <div id="limitBreaksSynchroChartOutput" style="display: none; width: 100%;"></div>
+    <div id="limitBreaksOverloadOutput" style="display: none; padding: 20px; width: 100%;"></div>
   </div>
 
   <div id="chartContainer" style="display:none;">
@@ -643,6 +715,10 @@ const POPUP_HTML = `
   </div>
 
   <div id="chartTopDrawerContainer" style="display:none;">
+    <div class="segmented-control">
+      <button id="btnResidualTop" class="segmented-btn active">Above Expectations</button>
+      <button id="btnResidualLow" class="segmented-btn">Below Expectations</button>
+    </div>
     <div class="chart-block">
       <div id="chartTopDrawerDummy"></div>
     </div>

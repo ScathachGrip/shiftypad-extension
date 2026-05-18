@@ -29,6 +29,17 @@ class UnionRaidPopup {
   public btnAvgSynchro: HTMLElement;
   public btnAvgDamage: HTMLElement;
   public btnTopDrawer: HTMLElement;
+  public btnResidualTop: HTMLElement;
+  public btnResidualLow: HTMLElement;
+  public btnLimitBreaks: HTMLElement;
+  public btnLimitBreaksSynchro: HTMLElement;
+  public btnLimitBreaksOverload: HTMLElement;
+  public chartLimitBreaksContainer: HTMLElement;
+  public limitBreaksJsonOutput: HTMLElement;
+  public limitBreaksCpChartOutput: HTMLElement;
+  public limitBreaksSynchroChartOutput: HTMLElement;
+  public limitBreaksOverloadOutput: HTMLElement;
+  public limitBreaksSearch: HTMLInputElement;
   public scrapeBtn: HTMLButtonElement | null;
   public output: HTMLElement | null;
   public btnSiteSettings: HTMLElement;
@@ -53,11 +64,14 @@ class UnionRaidPopup {
   public apexChartAvg: ApexChartInstance | null = null;
   public apexChartAvgDamage: ApexChartInstance | null = null;
   public apexChartTopDrawer: ApexChartInstance | null = null;
+  public apexChartLimitBreaksCp: ApexChartInstance | null = null;
+  public apexChartLimitBreaksSynchro: ApexChartInstance | null = null;
   public unionName: string = "";
   public activeSeasonKey: string = "";
   public activeSeasonText: string = "";
   public loadingOverlay!: HTMLElement;
   public loadingText!: HTMLElement;
+  public currentLimitBreaksData: import("./types").PlayerRaidResult[] | null = null;
 
   constructor() {
     const getEl = (id: string): HTMLElement => {
@@ -80,6 +94,17 @@ class UnionRaidPopup {
     this.btnAvgSynchro = getEl("btnAvgSynchro");
     this.btnAvgDamage = getEl("btnAvgDamage");
     this.btnTopDrawer = getEl("btnTopDrawer");
+    this.btnResidualTop = getEl("btnResidualTop");
+    this.btnResidualLow = getEl("btnResidualLow");
+    this.btnLimitBreaks = getEl("btnLimitBreaks");
+    this.btnLimitBreaksSynchro = getEl("btnLimitBreaksSynchro");
+    this.btnLimitBreaksOverload = getEl("btnLimitBreaksOverload");
+    this.chartLimitBreaksContainer = getEl("chartLimitBreaksContainer");
+    this.limitBreaksJsonOutput = getEl("limitBreaksJsonOutput");
+    this.limitBreaksCpChartOutput = getEl("limitBreaksCpChartOutput");
+    this.limitBreaksSynchroChartOutput = getEl("limitBreaksSynchroChartOutput");
+    this.limitBreaksOverloadOutput = getEl("limitBreaksOverloadOutput");
+    this.limitBreaksSearch = getEl("limitBreaksSearch") as HTMLInputElement;
     this.scrapeBtn = document.getElementById("scrapeBtn") as HTMLButtonElement | null;
     this.output = document.getElementById("output");
     this.btnSiteSettings = getEl("siteSettings");

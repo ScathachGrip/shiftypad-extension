@@ -8,6 +8,12 @@ const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 const versionTag = manifest.version_name || `v${manifest.version}`;
 ---
 
+{
+  Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+    <link rel="preload" href={`${import.meta.env.BASE_URL}showcase/${num}.webp`} as="image" type="image/webp" />
+  ))
+}
+
 <section class="hero">
   <div class="hero-bg">
     <img src={`${import.meta.env.BASE_URL}hero.png`} alt="" class="hero-bg-img" />
@@ -20,8 +26,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
           >right where you need it.</span>
       </h1>
       <p class="hero-desc">
-        Pull your Union Raid data with ease. Dive deep into your performance
-        with rich, interactive visualizations, season-aware cache, and <span style="font-weight: 900">one-click export</span>.
+        Blablalink Extension — Pull Union Raid data <span style="font-weight: 900">with ease.</span> interactive visualizations, clarity to every metrics, season-aware cache, and <span style="font-weight: 900">one-click export</span>.
       </p>
       <div class="hero-actions">
         <a href="#installation" class="hero-btn btn-primary">
@@ -70,7 +75,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
       </div>
     </div>
     <div class="hero-visual">
-      <img src={`${import.meta.env.BASE_URL}app.png`} alt="Shiftypad Extension" class="hero-app-img" />
+      <img id="heroShowcaseImage" src={`${import.meta.env.BASE_URL}showcase/1.webp`} alt="Shiftypad Extension" class="hero-app-img" />
     </div>
   </div>
 </section>
@@ -234,6 +239,36 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
       scale(1.02);
   }
 
+  .hero-app-img.anim-out {
+    animation: -global-swap-out 0.5s forwards cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  .hero-app-img.anim-in {
+    animation: -global-swap-in 0.6s forwards cubic-bezier(0.25, 1, 0.5, 1);
+  }
+
+  @keyframes -global-swap-out {
+    0% {
+      transform: perspective(1200px) rotateY(-25deg) rotateX(10deg) rotateZ(-4deg) scale(1) translateX(0);
+      opacity: 1;
+    }
+    100% {
+      transform: perspective(1200px) rotateY(-45deg) rotateX(20deg) rotateZ(-10deg) scale(0.85) translateX(-200px) translateY(-50px);
+      opacity: 0;
+    }
+  }
+
+  @keyframes -global-swap-in {
+    0% {
+      transform: perspective(1200px) rotateY(15deg) rotateX(-10deg) rotateZ(2deg) scale(0.85) translateX(200px) translateY(50px);
+      opacity: 0;
+    }
+    100% {
+      transform: perspective(1200px) rotateY(-25deg) rotateX(10deg) rotateZ(-4deg) scale(1) translateX(0);
+      opacity: 1;
+    }
+  }
+
   [data-theme="light"] .hero-app-img {
     box-shadow: 0 30px 80px rgba(0, 0, 0, 0.1);
   }
@@ -292,3 +327,47 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
     }
   }
 </style>
+
+<script>
+  const baseUrl = import.meta.env.BASE_URL;
+  const imgElement = document.getElementById("heroShowcaseImage") as HTMLImageElement | null;
+  if (imgElement) {
+    const totalImages = 12;
+    let currentNum = 1;
+    
+    setInterval(() => {
+      // Pick a random image from 1 to 12 (different from current image)
+      let nextNum;
+      do {
+        nextNum = Math.floor(Math.random() * totalImages) + 1;
+      } while (nextNum === currentNum);
+      
+      currentNum = nextNum;
+      const nextSrc = `${baseUrl}showcase/${currentNum}.webp`;
+      
+      // Start pre-decoding the image in the background IMMEDIATELY
+      const tempImg = new Image();
+      tempImg.src = nextSrc;
+      const decodePromise = tempImg.decode().catch(() => {});
+      
+      // 1. Trigger the out keyframe animation
+      imgElement.classList.remove("anim-in");
+      imgElement.classList.add("anim-out");
+      
+      // 2. Once the 500ms out animation completes, swap source and trigger in animation
+      setTimeout(() => {
+        decodePromise.then(() => {
+          imgElement.src = nextSrc;
+          
+          imgElement.classList.remove("anim-out");
+          imgElement.classList.add("anim-in");
+          
+          // Remove class after animation finishes (600ms) to allow default hovers
+          setTimeout(() => {
+            imgElement.classList.remove("anim-in");
+          }, 600);
+        });
+      }, 500); // 500ms matches the swap-out animation duration
+    }, 4000);
+  }
+</script>

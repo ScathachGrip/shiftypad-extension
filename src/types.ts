@@ -10,11 +10,22 @@ type SynchroRow = {
   synchroLevel: number;
 };
 
+export type NikkeHero = {
+  avatarName: string;
+  avatarUrl: string;
+  synchroLevel: number;
+  limitBreak: number;
+  coreLevel: string;
+  finalTier: string;
+  combatPower: string;
+};
+
 type RaidDamageRow = {
   boss: string;
   difficulty: string;
   level: number;
   damage: number;
+  heroes?: NikkeHero[];
 };
 
 type PlayerRaidResult = {
@@ -83,12 +94,23 @@ type PopupState = {
   chartAvgContainer: HTMLElement;
   chartAvgDamageContainer: HTMLElement;
   chartTopDrawerContainer: HTMLElement;
+  chartLimitBreaksContainer: HTMLElement;
+  limitBreaksJsonOutput: HTMLElement;
+  limitBreaksCpChartOutput: HTMLElement;
+  limitBreaksSynchroChartOutput: HTMLElement;
+  limitBreaksOverloadOutput: HTMLElement;
+  limitBreaksSearch: HTMLInputElement;
   btnTable: HTMLElement;
   btnChart: HTMLElement;
   btnChartBoss: HTMLElement;
   btnAvgSynchro: HTMLElement;
   btnAvgDamage: HTMLElement;
   btnTopDrawer: HTMLElement;
+  btnLimitBreaks: HTMLElement;
+  btnLimitBreaksSynchro: HTMLElement;
+  btnLimitBreaksOverload: HTMLElement;
+  btnResidualTop: HTMLElement;
+  btnResidualLow: HTMLElement;
   scrapeBtn: HTMLButtonElement | null;
   output: HTMLElement | null;
   btnSiteSettings: HTMLElement;
@@ -112,11 +134,14 @@ type PopupState = {
   apexChartAvg: ApexChartInstance | null;
   apexChartAvgDamage: ApexChartInstance | null;
   apexChartTopDrawer: ApexChartInstance | null;
+  apexChartLimitBreaksCp: ApexChartInstance | null;
+  apexChartLimitBreaksSynchro: ApexChartInstance | null;
   unionName: string;
   activeSeasonKey: string;
   activeSeasonText: string;
   loadingOverlay: HTMLElement;
   loadingText: HTMLElement;
+  currentLimitBreaksData: PlayerRaidResult[] | null;
 };
 
 type ChromeMessage =

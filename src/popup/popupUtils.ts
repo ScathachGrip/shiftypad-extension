@@ -101,10 +101,12 @@ export function parseNumber(val: string | number | undefined): number {
  * @returns {string} The formatted number.
  */
 export function formatNumber(val: number): string {
-  if (val >= 1_000_000_000) {return (val / 1_000_000_000).toFixed(1) + "B";}
-  if (val >= 1_000_000) {return (val / 1_000_000).toFixed(1) + "M";}
-  if (val >= 1_000) {return (val / 1_000).toFixed(1) + "K";}
-  return val.toString();
+  const sign = val < 0 ? "-" : "";
+  const absVal = Math.abs(val);
+  if (absVal >= 1_000_000_000) {return sign + (absVal / 1_000_000_000).toFixed(1) + "B";}
+  if (absVal >= 1_000_000) {return sign + (absVal / 1_000_000).toFixed(1) + "M";}
+  if (absVal >= 1_000) {return sign + (absVal / 1_000).toFixed(1) + "K";}
+  return sign + absVal.toString();
 }
 
 /**

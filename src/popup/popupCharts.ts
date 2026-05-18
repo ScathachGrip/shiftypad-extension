@@ -1,4 +1,4 @@
-import { ApexChartOptions, ApexChartsConstructor, BossData, PlayerRaidResult, PopupState } from "../types";
+import { ApexChartOptions, ApexChartsConstructor, BossData, PlayerRaidResult, PopupState, NikkeHero } from "../types";
 import { getBossWeakness } from "../utils/modifier";
 import * as PopupUtils from "./popupUtils";
 
@@ -24,7 +24,7 @@ export function renderAvgDamageChart(state: PopupState): void {
   const avg = data.reduce((a, b) => a + b, 0) / data.length;
   const avgLine = data.map(() => avg);
 
-  if (state.apexChartAvgDamage) {void state.apexChartAvgDamage.destroy();}
+  if (state.apexChartAvgDamage) { void state.apexChartAvgDamage.destroy(); }
 
   const options: ApexChartOptions = {
     chart: { type: "area", height: 420, toolbar: { show: false } },
@@ -76,7 +76,7 @@ export function renderAvgDamageChart(state: PopupState): void {
  * @param {PopupState} state - The current state of the popup, including data rows and union name.
  * @returns {void}
  */
-export function renderTopDrawerChart(state: PopupState): void {
+export function renderTopDrawerChart(state: PopupState, order: "top" | "low" = "top"): void {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     const url = tabs[0]?.url;
     if (!url) {
@@ -129,68 +129,126 @@ export function renderTopDrawerChart(state: PopupState): void {
       const ranked = [...candidates].sort((p1, p2) => {
         const r1 = totalDamage(p1) - (a * p1.synchro + b);
         const r2 = totalDamage(p2) - (a * p2.synchro + b);
-        if (r2 !== r1) {return r2 - r1;}
-        return totalDamage(p2) - totalDamage(p1);
+        if (r1 !== r2) {
+          return order === "top" ? r2 - r1 : r1 - r2;
+        }
+        return order === "top" ? totalDamage(p2) - totalDamage(p1) : totalDamage(p1) - totalDamage(p2);
       });
 
-      const top5 = ranked.slice(0, 5);
-      const labels = top5.map((p) => `${p.player} (${p.synchro})`);
-      const residuals = top5.map((p) => totalDamage(p) - (a * p.synchro + b));
-      const totals = top5.map((p) => totalDamage(p));
-      const synchros = top5.map((p) => p.synchro);
+      const slice5 = ranked.slice(0, 5);
+      const labels = slice5.map((p) => `${p.player} (${p.synchro})`);
+      const residuals = slice5.map((p) => totalDamage(p) - (a * p.synchro + b));
+      const totals = slice5.map((p) => totalDamage(p));
+      const synchros = slice5.map((p) => p.synchro);
 
-      if (state.apexChartTopDrawer) {void state.apexChartTopDrawer.destroy();}
+      if (state.apexChartTopDrawer) { void state.apexChartTopDrawer.destroy(); }
 
-      const colors = top5.map(() =>
-        `rgb(${Math.random() * 256 | 0},${Math.random() * 256 | 0},${Math.random() * 256 | 0})`
-      );
-
-      const options: ApexChartOptions = {
-        chart: { type: "bar", height: 420, toolbar: { show: false } },
-        series: [{ name: "Residual", data: residuals }],
-        xaxis: {
-          categories: labels,
-          labels: {
-            rotate: -20,
-            rotateAlways: false,
-            style: { colors: PopupUtils.getAxisLabelColor(), fontWeight: 600 }
-          }
-        },
-        yaxis: {
-          title: { text: "Residual (Above Expected Damage)", style: { color: PopupUtils.getAxisLabelColor() } },
-          labels: { formatter: (val: number) => PopupUtils.formatNumber(val), style: { colors: PopupUtils.getAxisLabelColor() } }
-        },
-        plotOptions: { bar: { columnWidth: "55%", distributed: true } },
-        dataLabels: {
-          enabled: true,
-          formatter: (val: number) => PopupUtils.formatNumber(val)
-        },
-        colors,
-        grid: { borderColor: PopupUtils.getGridColor() },
-        legend: { show: false },
-        title: {
-          text: `${state.unionName || "Union"}: Top 5 Efficiency (Residual)`,
-          align: "center",
-          style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
-        },
-        tooltip: {
-          theme: PopupUtils.getTooltipTheme(),
-          custom: ({ dataPointIndex }: { dataPointIndex: number }) => {
-            const name = labels[dataPointIndex] ?? "";
-            const residual = residuals[dataPointIndex] ?? 0;
-            const damage = totals[dataPointIndex] ?? 0;
-            const synchro = synchros[dataPointIndex] ?? 0;
-            return `
-              <div style="padding:8px 10px;">
-                <div style="font-weight:700; margin-bottom:6px;">${name}</div>
-                <div>Residual: ${PopupUtils.formatNumber(residual)}</div>
-                <div>Damage: ${PopupUtils.formatNumber(damage)}</div>
-                <div>Synchro: ${synchro}</div>
-              </div>
-            `;
-          }
+      const isLow = order === "low";
+      const colors = slice5.map((_, i) => {
+        if (isLow) {
+          const reds = ["#f87171", "#ef4444", "#dc2626", "#b91c1c", "#991b1b"];
+          return reds[i % reds.length];
         }
-      };
+        return `rgb(${Math.random() * 256 | 0},${Math.random() * 256 | 0},${Math.random() * 256 | 0})`;
+      });
+
+      let options: ApexChartOptions;
+
+      if (isLow) {
+        options = {
+          series: [{ name: "Residual", data: residuals }],
+          chart: { type: "bar", height: 420, toolbar: { show: false } },
+          colors,
+          plotOptions: { bar: { distributed: true, horizontal: true } },
+          dataLabels: {
+            enabled: true,
+            formatter: (val: number) => PopupUtils.formatNumber(val)
+          },
+          xaxis: {
+            categories: labels,
+            labels: {
+              style: { colors: PopupUtils.getAxisLabelColor(), fontWeight: 600 },
+              formatter: (val: string) => PopupUtils.formatNumber(Number(val))
+            },
+            title: { text: "Residual (Below Expected Damage)", style: { color: PopupUtils.getAxisLabelColor() } }
+          },
+          yaxis: {
+            title: { text: "", style: { color: PopupUtils.getAxisLabelColor() } },
+            labels: { style: { colors: PopupUtils.getAxisLabelColor() } }
+          },
+          grid: { borderColor: PopupUtils.getGridColor() },
+          legend: { show: false },
+          title: {
+            text: `${state.unionName || "Union"}: Below Expectations`,
+            align: "center",
+            style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+          },
+          tooltip: {
+            theme: PopupUtils.getTooltipTheme(),
+            custom: ({ dataPointIndex }: { dataPointIndex: number }) => {
+              const name = labels[dataPointIndex] ?? "";
+              const residual = residuals[dataPointIndex] ?? 0;
+              const damage = totals[dataPointIndex] ?? 0;
+              const synchro = synchros[dataPointIndex] ?? 0;
+              return `
+                <div style="padding:8px 10px;">
+                  <div style="font-weight:700; margin-bottom:6px;">${name}</div>
+                  <div>Residual: ${PopupUtils.formatNumber(residual)}</div>
+                  <div>Damage: ${PopupUtils.formatNumber(damage)}</div>
+                  <div>Synchro: ${synchro}</div>
+                </div>
+              `;
+            }
+          }
+        };
+      } else {
+        options = {
+          chart: { type: "bar", height: 420, toolbar: { show: false } },
+          series: [{ name: "Residual", data: residuals }],
+          xaxis: {
+            categories: labels,
+            labels: {
+              rotate: -20,
+              rotateAlways: false,
+              style: { colors: PopupUtils.getAxisLabelColor(), fontWeight: 600 }
+            }
+          },
+          yaxis: {
+            title: { text: "Residual (Above Expected Damage)", style: { color: PopupUtils.getAxisLabelColor() } },
+            labels: { formatter: (val: number) => PopupUtils.formatNumber(val), style: { colors: PopupUtils.getAxisLabelColor() } }
+          },
+          plotOptions: { bar: { columnWidth: "55%", distributed: true } },
+          dataLabels: {
+            enabled: true,
+            formatter: (val: number) => PopupUtils.formatNumber(val)
+          },
+          colors,
+          grid: { borderColor: PopupUtils.getGridColor() },
+          legend: { show: false },
+          title: {
+            text: `${state.unionName || "Union"}: Above Expectations`,
+            align: "center",
+            style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+          },
+          tooltip: {
+            theme: PopupUtils.getTooltipTheme(),
+            custom: ({ dataPointIndex }: { dataPointIndex: number }) => {
+              const name = labels[dataPointIndex] ?? "";
+              const residual = residuals[dataPointIndex] ?? 0;
+              const damage = totals[dataPointIndex] ?? 0;
+              const synchro = synchros[dataPointIndex] ?? 0;
+              return `
+                <div style="padding:8px 10px;">
+                  <div style="font-weight:700; margin-bottom:6px;">${name}</div>
+                  <div>Residual: ${PopupUtils.formatNumber(residual)}</div>
+                  <div>Damage: ${PopupUtils.formatNumber(damage)}</div>
+                  <div>Synchro: ${synchro}</div>
+                </div>
+              `;
+            }
+          }
+        };
+      }
 
       state.apexChartTopDrawer = new ApexCharts(document.querySelector("#chartTopDrawerDummy"), options);
       void state.apexChartTopDrawer.render();
@@ -243,7 +301,7 @@ export function renderAvgSynchroChart(state: PopupState): void {
   const series = nonZeroBuckets.map(b => b.count);
   const dominant = nonZeroBuckets.reduce((best, cur) => (cur.count > best.count ? cur : best), nonZeroBuckets[0]);
 
-  if (state.apexChartAvg) {void state.apexChartAvg.destroy();}
+  if (state.apexChartAvg) { void state.apexChartAvg.destroy(); }
 
   const palette = PopupUtils.getChartColors();
   const colors = palette
@@ -318,7 +376,7 @@ export function renderChartBoss(state: PopupState): void {
           if (!tabId) {
             return;
           }
-          alert("Content script not ready. Reloading this page now.");
+          alert("Page connection lost. Refreshing the page to reconnect.");
           void chrome.tabs.reload(tabId);
           window.close();
           return;
@@ -335,7 +393,7 @@ export function renderChartBoss(state: PopupState): void {
           const playerName = playerData.player;
           const playerSynchro = Number(playerData.synchro ?? 0);
           for (const row of playerData.rows) {
-            if (!bossMap[row.boss]) {bossMap[row.boss] = {};}
+            if (!bossMap[row.boss]) { bossMap[row.boss] = {}; }
             const prev = bossMap[row.boss][playerName]?.damage ?? 0;
             bossMap[row.boss][playerName] = {
               damage: prev + row.damage,
@@ -354,7 +412,7 @@ export function renderChartBoss(state: PopupState): void {
         bossArray = bossArray.slice(0, 5);
 
         const container = document.querySelector<HTMLDivElement>("#chartBossContainer");
-        if (!container) {return;}
+        if (!container) { return; }
         container.innerHTML = "";
 
         for (const bossData of bossArray) {
@@ -459,7 +517,7 @@ export function renderChartFromRows(state: PopupState): void {
     .replace(/^Union:\s*/i, "")
     .trim();
 
-  if (state.apexChart) {void state.apexChart.destroy();}
+  if (state.apexChart) { void state.apexChart.destroy(); }
 
   const palette = PopupUtils.getChartColors();
   const colors = palette
@@ -636,8 +694,159 @@ export function refreshVisibleCharts(state: PopupState): void {
     renderAvgDamageChart(state);
     return;
   }
+  if (state.chartLimitBreaksContainer.style.display === "flex") {
+    if (document.getElementById("btnLimitBreaksCp")?.classList.contains("active") && state.currentLimitBreaksData) {
+      void renderLimitBreaksCpChart(state, state.currentLimitBreaksData);
+    } else if (document.getElementById("btnLimitBreaksSynchro")?.classList.contains("active") && state.currentLimitBreaksData) {
+      void renderLimitBreaksSynchroChart(state, state.currentLimitBreaksData);
+    }
+    return;
+  }
   if (state.chartTopDrawerContainer.style.display === "block") {
-    renderTopDrawerChart(state);
+    const isLow = state.btnResidualLow.classList.contains("active");
+    renderTopDrawerChart(state, isLow ? "low" : "top");
+    return;
   }
 }
 
+/**
+ * Renders a bar chart showing the total Combat Power for each player.
+ */
+export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRaidResult[]): Promise<void> {
+  if (state.apexChartLimitBreaksCp) {
+    await state.apexChartLimitBreaksCp.destroy();
+    state.apexChartLimitBreaksCp = null;
+  }
+
+  const cpData: { player: string; cp: number }[] = [];
+
+  data.forEach(playerResult => {
+    let totalCp = 0;
+    const uniqueHeroes = new Map<string, NikkeHero>();
+
+    playerResult.rows.forEach(r => {
+      if (r.heroes) {
+        r.heroes.forEach(h => {
+          uniqueHeroes.set(h.avatarUrl, h);
+        });
+      }
+    });
+
+    uniqueHeroes.forEach(h => {
+      const cpNum = parseInt(String(h.combatPower).replace(/,/g, ""), 10) || 0;
+      totalCp += cpNum;
+    });
+
+    if (totalCp > 0) {
+      cpData.push({ player: playerResult.player, cp: totalCp });
+    }
+  });
+
+  cpData.sort((a, b) => b.cp - a.cp);
+
+  const labels = cpData.map(d => d.player);
+  const seriesData = cpData.map(d => d.cp);
+
+  const palette = PopupUtils.getChartColors();
+  const colors = palette
+    ? seriesData.map((_, i) => palette[i % palette.length])
+    : seriesData.map(() => "#5b6bff");
+
+  const options: ApexChartOptions = {
+    chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
+    series: [{ name: "Combat Power", data: seriesData }],
+    title: {
+      text: `${state.unionName || "Union"} - Combat Power`,
+      align: "center",
+      style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+    },
+    plotOptions: {
+      bar: { horizontal: false, distributed: true, columnWidth: "70%", borderRadius: 4, dataLabels: { position: "top" } }
+    },
+    xaxis: {
+      categories: labels,
+      tickAmount: labels.length,
+      tickPlacement: "on",
+      labels: {
+        rotate: -30,
+        rotateAlways: true,
+        hideOverlappingLabels: false,
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: (val: number) => PopupUtils.formatNumber(val),
+        style: { colors: PopupUtils.getAxisLabelColor() }
+      }
+    },
+    colors: colors,
+    dataLabels: { enabled: false },
+    tooltip: { theme: document.body.classList.contains("theme-dark") ? "dark" : "light" },
+    grid: { borderColor: PopupUtils.getGridColor() },
+    legend: { show: false }
+  };
+
+  state.apexChartLimitBreaksCp = new ApexCharts(state.limitBreaksCpChartOutput, options);
+  await state.apexChartLimitBreaksCp.render();
+}
+
+
+
+/**
+ * Renders a bar chart showing the Synchro Level for each player.
+ */
+export async function renderLimitBreaksSynchroChart(state: import("../types").PopupState, data: import("../types").PlayerRaidResult[]): Promise<void> {
+  if (state.apexChartLimitBreaksSynchro) {
+    await state.apexChartLimitBreaksSynchro.destroy();
+    state.apexChartLimitBreaksSynchro = null;
+  }
+
+  const synchroData = data.map(r => ({ player: r.player, synchro: r.synchro })).sort((a, b) => b.synchro - a.synchro);
+
+  const labels = synchroData.map(d => d.player);
+  const seriesData = synchroData.map(d => d.synchro);
+
+  const palette = PopupUtils.getChartColors();
+  const colors = palette
+    ? seriesData.map((_, i) => palette[i % palette.length])
+    : seriesData.map(() => "#5b6bff");
+
+  const options: import("../types").ApexChartOptions = {
+    chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
+    series: [{ name: "Synchro Level", data: seriesData }],
+    title: {
+      text: `${state.unionName || "Union"} - Synchro Level`,
+      align: "center",
+      style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+    },
+    plotOptions: {
+      bar: { horizontal: false, distributed: true, columnWidth: "70%", borderRadius: 4, dataLabels: { position: "top" } }
+    },
+    xaxis: {
+      categories: labels,
+      tickAmount: labels.length,
+      tickPlacement: "on",
+      labels: {
+        rotate: -30,
+        rotateAlways: true,
+        hideOverlappingLabels: false,
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
+      }
+    },
+    yaxis: {
+      labels: {
+        formatter: (val: number) => PopupUtils.formatNumber(val),
+        style: { colors: PopupUtils.getAxisLabelColor() }
+      }
+    },
+    colors: colors,
+    dataLabels: { enabled: false },
+    tooltip: { theme: document.body.classList.contains("theme-dark") ? "dark" : "light" },
+    grid: { borderColor: PopupUtils.getGridColor() },
+    legend: { show: false }
+  };
+
+  state.apexChartLimitBreaksSynchro = new ApexCharts(state.limitBreaksSynchroChartOutput, options);
+  await state.apexChartLimitBreaksSynchro.render();
+}
