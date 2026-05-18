@@ -7,8 +7,8 @@ export interface Props {
 }
 
 const { 
-  title = "@ScathachGrip/shiftypad-extension", 
-  description = "Analytics extension for Blablalink Union Raid management." 
+  title = "ShiftyPad Extension", 
+  description = "Blablalink extension with Union Raid data focused."
 } = Astro.props;
 ---
 
@@ -19,9 +19,14 @@ const {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0a" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:type" content="website" />
+    
+    <meta property="og:image" content="https://shiftypad.scathach.id/project/shiftypad.png">
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:image" content="https://shiftypad.scathach.id/project/shiftypad.png">
+    <meta property="og:title" content={title}>
+    <meta property="og:description" content={description}>
+    
+    <link rel="canonical" href={Astro.url.href} />
     <link rel="icon" type="image/png" sizes="128x128" href={`${import.meta.env.BASE_URL}favicon.png`} />
     <link rel="shortcut icon" type="image/png" href={`${import.meta.env.BASE_URL}favicon.png`} />
     <link rel="apple-touch-icon" href={`${import.meta.env.BASE_URL}favicon.png`} />
