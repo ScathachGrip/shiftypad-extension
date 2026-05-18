@@ -20,7 +20,7 @@ Union Raid data, right where you need it — Pull Union Raid data with ease. int
   - [The problem](#the-problem)
   - [The solution](#the-solution)
   - [Prerequisites](#prerequisites)
-  - [Architecture](#architecture)
+  - [Architecture](/src)
   - [Data Contracts](#data-contracts)
     - [MemberRow](#data-contracts)
     - [PlayerRaidResult](#data-contracts)
@@ -40,15 +40,10 @@ Union Raid data, right where you need it — Pull Union Raid data with ease. int
 
 
 ## The problem
-Managing and analyzing Union Raid data in NIKKE (`blablalink.com/shiftyspad/union-raid`) is highly tedious and manual:
-- **Lack of Native Visualization:** The platform does not offer intuitive graphs, charts, or comparison tools to easily visualize member contributions or boss damage distribution.
-- **No Historical Tracking:** There is no built-in mechanism to track historical raid performance or view data across different seasons without manual exports or screenshots.
-- **Inability to Assess Player Efficiency:** Raw damage numbers do not paint a full picture. Factors like player synchro levels significantly influence contribution, making it hard to identify who is performing efficiently relative to their level.
-- **Time-Consuming Scraping:** Manually collecting and consolidating individual player attempt records across all members is highly repetitive and prone to human error.
-
+Union Raid data in (`blablalink.com/shiftyspad/union-raid`) is highly tedious, that's all.
 
 ## The solution
-**shiftypad-extension** is a powerful Manifest V3 Chrome extension designed to transform how Union leaders and players experience Union Raids. By automating data extraction and providing rich, local interactive analytics directly in your browser, it solves these headaches seamlessly:
+**shiftypad-extension** Manifest V3 Chrome extension designed to transform how Union leaders and players experience Union Raids. By automating data extraction and providing rich, local interactive analytics directly in your browser, it solves these headaches seamlessly:
 - **Instant Interactive Analytics:** A sleek displaying responsive visual reports powered by ApexCharts, including player rankings and residual damage.
 - **Automated DOM Scraping:** Injects safe page-side content scripts to scrape both summary (`MemberRow`) and detailed attempt-level raid results (`PlayerRaidResult[]`) instantly.
 - **Season-Aware Local Cache:** Automatically structures and caches all scraped data per season in `chrome.storage.local`, ensuring fast load times and preventing redundant DOM scraping.
@@ -58,29 +53,6 @@ Managing and analyzing Union Raid data in NIKKE (`blablalink.com/shiftyspad/unio
 
 ### Prerequisites
 - [Bun](https://bun.sh) >= 1.3.13 or higher
-
-## Architecture
-
-```
-src/                          Extension source code (TypeScript)
-  content.ts                  Page-side content
-  serviceWorker.ts            Background service worker (MV3)
-  popup.tsx                   Popup shell (React/TSX, HTML+CSS mount)
-  popupInit.ts                Popup state bootstrap and wiring
-  popup/                      Popup logic, split by concern
-    popupData.ts              Data fetching and caching
-    popupCharts.ts            ApexCharts rendering
-    popupActions.ts           User interaction handlers
-    popupRender.ts            DOM rendering
-    popupScrape.ts            Modal scraping control logic
-    popupUi.ts                UI element management
-    popupUtils.ts             Utility helpers
-  types.ts                    Shared type definitions
-  types/global.d.ts           Global ambient type declarations
-  utils/
-    modifier.ts               DOM parsing, scraping helpers, cache-key generation
-    logForwarder.ts           Console log forwarding to popup
-```
 
 ## Data Contracts
 
