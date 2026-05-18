@@ -8,6 +8,12 @@ const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 const versionTag = manifest.version_name || `v${manifest.version}`;
 ---
 
+{
+  Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
+    <link rel="preload" href={`${import.meta.env.BASE_URL}showcase/${num}.webp`} as="image" type="image/webp" />
+  ))
+}
+
 <section class="hero">
   <div class="hero-bg">
     <img src={`${import.meta.env.BASE_URL}hero.png`} alt="" class="hero-bg-img" />
@@ -20,8 +26,8 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
           >right where you need it.</span>
       </h1>
       <p class="hero-desc">
-        Blablalink Extension — Pull Union Raid data with ease. Dive deep into your performance
-        with rich, interactive visualizations, clarity to every metric, season-aware cache, and <span style="font-weight: 900">one-click export</span>.
+        Blablalink Extension — Pull Union Raid data <span style="font-weight: 900">with ease.</span> Dive deep into your performance
+        with rich, interactive visualizations, clarity to every metric, lossless season-aware cache, and <span style="font-weight: 900">one-click export</span>.
       </p>
       <div class="hero-actions">
         <a href="#installation" class="hero-btn btn-primary">
@@ -70,7 +76,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
       </div>
     </div>
     <div class="hero-visual">
-      <img id="heroShowcaseImage" src={`${import.meta.env.BASE_URL}showcase/1.png`} alt="Shiftypad Extension" class="hero-app-img" />
+      <img id="heroShowcaseImage" src={`${import.meta.env.BASE_URL}showcase/1.webp`} alt="Shiftypad Extension" class="hero-app-img" />
     </div>
   </div>
 </section>
@@ -334,7 +340,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
     const preloadedImages = [];
     for (let i = 1; i <= totalImages; i++) {
       const img = new Image();
-      img.src = `${baseUrl}showcase/${i}.png`;
+      img.src = `${baseUrl}showcase/${i}.webp`;
       preloadedImages.push(img);
     }
     
@@ -346,7 +352,7 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
       } while (nextNum === currentNum);
       
       currentNum = nextNum;
-      const nextSrc = `${baseUrl}showcase/${currentNum}.png`;
+      const nextSrc = `${baseUrl}showcase/${currentNum}.webp`;
       
       // Start pre-decoding the image in the background IMMEDIATELY
       const tempImg = new Image();
@@ -371,6 +377,6 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
           }, 600);
         });
       }, 500); // 500ms matches the swap-out animation duration
-    }, 10000); // 10 seconds
+    }, 3000);
   }
 </script>
