@@ -41,6 +41,13 @@
           Ready to use
         </div>
       </div>
+
+      <!-- Video Guide -->
+      <div class="video-card">
+        <video id="guide-player" playsinline controls>
+          <source src="/project/guide.mp4" type="video/mp4">
+        </video>
+      </div>
     </div>
 
   </div>
@@ -162,9 +169,37 @@
     box-shadow: 0 0 8px #febc2e;
   }
 
+  .video-card {
+    grid-column: 1 / -1;
+    background: var(--surface);
+    border: 1px solid transparent;
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.2s ease;
+  }
+
+  .video-card:hover {
+    border-color: var(--color-primary);
+    transform: translateY(-4px);
+  }
+
   @media (max-width: 992px) {
     .steps-grid {
       grid-template-columns: 1fr;
     }
   }
 </style>
+
+<script>
+  import 'plyr/dist/plyr.css';
+  import Plyr from 'plyr';
+
+  document.addEventListener('DOMContentLoaded', () => {
+    new Plyr('#guide-player', {
+      controls: ['play-large', 'play', 'progress', 'current-time', 'duration', 'mute', 'volume', 'fullscreen'],
+    });
+  });
+</script>
