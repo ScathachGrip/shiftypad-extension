@@ -1,5 +1,5 @@
 import { MemberRow, SynchroRow, RaidDamageRow, PlayerRaidResult } from "../types";
-
+import { showCustomAlert } from "./alerts";
 /**
  * Get the elemental weakness of a given boss based on its name.
  *
@@ -7,15 +7,15 @@ import { MemberRow, SynchroRow, RaidDamageRow, PlayerRaidResult } from "../types
  * @returns {string} The elemental weakness of the boss. Returns "Unknown weakness" if no match is found or if the input is empty.
  */
 function getBossWeakness(bossName: string): string {
-  if (!bossName) {return "Unknown weakness";}
+  if (!bossName) { return "Unknown weakness"; }
 
   const name = bossName.toUpperCase();
 
-  if (/H\.S\.T\.A\.?/.test(name)) {return "Water weakness";}
-  if (/A\.N\.M\.I\.?/.test(name)) {return "Fire weakness";}
-  if (/D\.M\.T\.R\.?/.test(name)) {return "Wind weakness";}
-  if (/P\.S\.I\.D\.?/.test(name)) {return "Electric weakness";}
-  if (/Z\.E\.U\.S\.?/.test(name)) {return "Iron weakness";}
+  if (/H\.S\.T\.A\.?/.test(name)) { return "Water weakness"; }
+  if (/A\.N\.M\.I\.?/.test(name)) { return "Fire weakness"; }
+  if (/D\.M\.T\.R\.?/.test(name)) { return "Wind weakness"; }
+  if (/P\.S\.I\.D\.?/.test(name)) { return "Electric weakness"; }
+  if (/Z\.E\.U\.S\.?/.test(name)) { return "Iron weakness"; }
 
   return "Unknown weakness";
 }
@@ -44,7 +44,7 @@ function waitForElement<T extends Element>(
 ): Promise<T | null> {
   return new Promise(resolve => {
     const found = document.querySelector<T>(selector);
-    if (found) {return resolve(found);}
+    if (found) { return resolve(found); }
 
     const obs = new MutationObserver(() => {
       const el = document.querySelector<T>(selector);
@@ -189,7 +189,7 @@ function getCurrentSeasonText(): string {
   // Ultimate fallback: search every single element for a leaf node with the pattern
   const allElements = Array.from(document.querySelectorAll<HTMLElement>("*"));
   for (const el of allElements) {
-    if (el.children.length > 0) {continue;} // Only leaf nodes
+    if (el.children.length > 0) { continue; } // Only leaf nodes
     const text = el.textContent?.trim() ?? "";
     if (/\[S\d+\]/i.test(text)) {
       return text;
@@ -210,8 +210,8 @@ function getCurrentSeasonText(): string {
 
 function seasonTextToKey(text: string): string {
   const normalized = text.trim().replace(/\s+/g, " ");
-  if (!normalized) {return "";}
-  if (!/\[S\d+\]/i.test(normalized)) {return "";}
+  if (!normalized) { return ""; }
+  if (!/\[S\d+\]/i.test(normalized)) { return ""; }
 
   const compact = normalized
     .replace(/\//g, "_")
@@ -222,7 +222,7 @@ function seasonTextToKey(text: string): string {
 
   const seasonMatch = normalized.match(/\[(S\d+)\]/i);
   const season = (seasonMatch?.[1] ?? "").toUpperCase();
-  if (!season) {return "";}
+  if (!season) { return ""; }
   return `SEASON_${season}_${compact.toUpperCase()}`;
 }
 
@@ -257,7 +257,7 @@ function scrapeSynchroLevels(): SynchroRow[] {
       const match = text.match(/Synchro Level:\s*(\d+)/);
       const level = match ? Number(match[1]) : null;
 
-      if (!name || level === null) {return null;}
+      if (!name || level === null) { return null; }
 
       return {
         name,
@@ -330,7 +330,7 @@ async function scrapeUnionRaidAllModals(
         <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
       </g>
     </svg>
-    <span id="shiftypad-scrape-text">Scraping in progress... 0%</span>
+    <span id="shiftypad-scrape-text">Extracting data .. 0%</span>
   `;
   document.body.appendChild(spinner);
 
@@ -346,12 +346,12 @@ async function scrapeUnionRaidAllModals(
     const finalResult: PlayerRaidResult[] = [];
 
     for (let i = 0; i < buttons.length; i++) {
-      if (stopRequested) {break;}
+      if (stopRequested) { break; }
 
       const progress = Math.round((i / buttons.length) * 100);
       const textEl = document.getElementById("shiftypad-scrape-text");
       if (textEl) {
-        textEl.textContent = `Scraping in progress... ${progress}%`;
+        textEl.textContent = `Extracting data .. ${progress}%`;
       }
 
       const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
@@ -367,7 +367,7 @@ async function scrapeUnionRaidAllModals(
 
       let playerName = modal.querySelector<HTMLElement>("div.font-bold")?.textContent?.trim() ?? "UNKNOWN";
       let waitAttempts = 0;
-    
+
       // Wait for Vue to patch the modal for the new player (Text updates)
       while (waitAttempts < 25 && expectedPlayerName && playerName !== expectedPlayerName) {
         await sleepMs(20); // Super fast check
@@ -436,7 +436,7 @@ async function scrapeUnionRaidAllModals(
       const seasonedKey = getSeasonedCacheKey(seasonKey);
       if (!seasonedKey) {
         console.error("[Content] Failed to resolve seasoned key, cannot save data.");
-        alert("Error: Could not detect season. Data was not saved.");
+        await showCustomAlert("Error: Could not detect season. Data was not saved.");
         return;
       }
       const cacheKey = `ALL_UNION_RAID_DAMAGE_DATA_${seasonedKey}`;
@@ -460,7 +460,13 @@ async function scrapeUnionRaidAllModals(
       );
 
       console.log("💾 JSON SAVED TO STORAGE");
-      alert("Scrape complete! Data saved to storage.");
+      await showCustomAlert(
+        "All set! You can interact with Shiftypad Extension dashboard.",
+        "assets/interact.png"
+      );
+      chrome.runtime.sendMessage({ action: "OPEN_POPUP" }).catch(err => {
+        console.log("Failed to auto-open popup:", err);
+      });
     }
   } finally {
     spinner.remove();
@@ -515,7 +521,7 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
 
       const heroes: import("../types").NikkeHero[] = [];
       const heroContainers = block.querySelectorAll("div.relative.mr-\\[5px\\].w-\\[52px\\]");
-      
+
       heroContainers.forEach((hero, index) => {
         const avatarImg = hero.querySelector("img[alt^='Avatar']");
         const avatarName = avatarImg ? avatarImg.getAttribute("alt") || `Hero ${index + 1}` : `Hero ${index + 1}`;
@@ -643,7 +649,7 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
     }
     await sleepMs(50);
   }
-  
+
   return closed;
 }
 
@@ -689,7 +695,7 @@ function getCacheKey(): string {
 
 function getSeasonedCacheKey(seasonKey?: string): string {
   const resolvedSeasonKey = seasonKey ?? getCurrentSeasonKey();
-  if (!resolvedSeasonKey) {return "";}
+  if (!resolvedSeasonKey) { return ""; }
   return `${getCacheKey()}__${resolvedSeasonKey}`;
 }
 

@@ -11,6 +11,7 @@ import {
   seasonTextToKey,
 } from "./utils/modifier";
 import { installLogForwarder } from "./utils/logForwarder";
+import { showCustomAlert, showCustomConfirm } from "./utils/alerts";
 
 installLogForwarder("Content");
 
@@ -444,6 +445,8 @@ class UnionRaidScraper {
   }
 
 
+
+
   /**
    * Start scraping all union raid modals.
    * @public
@@ -451,18 +454,20 @@ class UnionRaidScraper {
    */
   public async startScraping(): Promise<void> {
     if (!isUnionRaidPage()) {
-      alert("❌ This only works on your /shiftyspad/union-raid/ path.");
+      await showCustomAlert("❌ This only works on your path:\n/shiftyspad/union-raid/");
       return;
     }
 
     if (!this.isHardSelected()) {
-      alert("Please click the HARD tab for Day 2 first, then try again.");
+      await showCustomAlert(
+        "Please click the Day 2 (HARD) elements.",
+        "assets/d2.png"
+      );
       return;
     }
 
-    const proceed = confirm(
-      "Please make sure you have clicked the 'DAY 2 (Hard-mode)' table buttons twice.\n" +
-      "Only after doing this, press OK to proceed or Cancel to abort."
+    const proceed = await showCustomConfirm(
+      "Day 2 detected, press OK to extract data or cancel to abort."
     );
 
     if (!proceed) {

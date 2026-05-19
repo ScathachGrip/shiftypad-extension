@@ -45,7 +45,12 @@
     {
       "resources": [
         "icons/icon128.png",
-        "assets/dor.mp3"
+        "assets/dor.mp3",
+        "assets/d2.png",
+        "assets/interact.png",
+        "assets/fonts/Poppins-Regular.woff2",
+        "assets/fonts/Poppins-SemiBold.woff2",
+        "assets/fonts/Poppins-Black.woff2"
       ],
       "matches": [
         "https://www.blablalink.com/*"
