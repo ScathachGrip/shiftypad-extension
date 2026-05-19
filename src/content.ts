@@ -451,7 +451,7 @@ class UnionRaidScraper {
    */
   public async startScraping(): Promise<void> {
     if (!isUnionRaidPage()) {
-      alert("This only works on your /shiftyspad/union-raid/ path.");
+      alert("❌ This only works on your /shiftyspad/union-raid/ path.");
       return;
     }
 
@@ -475,10 +475,10 @@ class UnionRaidScraper {
     this.isScrapingInProgress = true;
     this.setScrapeButtonState("busy");
     this.showScrapeBlocker();
-    
+
     let liveSeasonText = getCurrentSeasonText();
     let liveSeasonKey = seasonTextToKey(liveSeasonText);
-    
+
     // Last resort: if still empty and not locked, try to wait a tiny bit
     if (!liveSeasonKey && !this.manualSeasonLocked) {
       console.log("[Scraping] Season missing, waiting for DOM...");
@@ -503,11 +503,11 @@ class UnionRaidScraper {
       return;
     }
 
-    console.log("🟢 SCRAPE START", { 
-      targetKey: targetSeasonKey, 
-      targetText: targetSeasonText, 
+    console.log("🟢 SCRAPE START", {
+      targetKey: targetSeasonKey,
+      targetText: targetSeasonText,
       liveKey: liveSeasonKey,
-      locked: this.manualSeasonLocked 
+      locked: this.manualSeasonLocked
     });
 
     try {
