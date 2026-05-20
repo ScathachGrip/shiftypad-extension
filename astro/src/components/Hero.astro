@@ -8,12 +8,6 @@ const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 const versionTag = manifest.version_name || `v${manifest.version}`;
 ---
 
-{
-  Array.from({ length: 12 }, (_, i) => i + 1).map((num) => (
-    <link rel="preload" href={`${import.meta.env.BASE_URL}showcase/${num}.webp`} as="image" type="image/webp" />
-  ))
-}
-
 <section class="hero">
   <div class="hero-bg">
     <img src={`${import.meta.env.BASE_URL}hero.png`} alt="" class="hero-bg-img" />
