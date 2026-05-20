@@ -98,6 +98,7 @@ type PopupState = {
   limitBreaksJsonOutput: HTMLElement;
   limitBreaksCpChartOutput: HTMLElement;
   limitBreaksSynchroChartOutput: HTMLElement;
+  limitBreaksWhaleChartOutput: HTMLElement;
   limitBreaksOverloadOutput: HTMLElement;
   limitBreaksSearch: HTMLInputElement;
   btnTable: HTMLElement;
@@ -108,6 +109,7 @@ type PopupState = {
   btnTopDrawer: HTMLElement;
   btnLimitBreaks: HTMLElement;
   btnLimitBreaksSynchro: HTMLElement;
+  btnLimitBreaksWhale: HTMLElement;
   btnLimitBreaksOverload: HTMLElement;
   btnResidualTop: HTMLElement;
   btnResidualLow: HTMLElement;
@@ -136,6 +138,7 @@ type PopupState = {
   apexChartTopDrawer: ApexChartInstance | null;
   apexChartLimitBreaksCp: ApexChartInstance | null;
   apexChartLimitBreaksSynchro: ApexChartInstance | null;
+  apexChartLimitBreaksWhale: ApexChartInstance | null;
   unionName: string;
   activeSeasonKey: string;
   activeSeasonText: string;

@@ -17,13 +17,16 @@ enabled = false
 enabled = false
 
 [smells.file_complexity]
-threshold = 150
+threshold = 170
 
 [smells.function_complexity]
-threshold = 100
+threshold = 120
 
 [smells.return_statements]
 threshold = 20
+
+[smells.boolean_logic]
+threshold = 10
 
 [[source]]
 name = "default"

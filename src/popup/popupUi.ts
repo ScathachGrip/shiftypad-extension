@@ -1,6 +1,6 @@
 import { PopupState } from "../types";
 import { renderTable } from "./popupRender";
-import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart, renderLimitBreaksCpChart, renderLimitBreaksSynchroChart } from "./popupCharts";
+import { renderAvgDamageChart, renderAvgSynchroChart, renderChartBoss, renderChartFromRows, renderTopDrawerChart, renderLimitBreaksCpChart, renderLimitBreaksSynchroChart, renderLimitBreaksWhaleChart } from "./popupCharts";
 
 /**
  * Sets up sorting functionality for the table headers in the popup.
@@ -146,18 +146,20 @@ export function setupToggleButtons(state: PopupState): void {
   const btnLimitBreaksHtml = document.getElementById("btnLimitBreaksHtml");
   const btnLimitBreaksCp = document.getElementById("btnLimitBreaksCp");
   const btnLimitBreaksSynchro = document.getElementById("btnLimitBreaksSynchro");
+  const btnLimitBreaksWhale = document.getElementById("btnLimitBreaksWhale");
   const btnLimitBreaksOverload = document.getElementById("btnLimitBreaksOverload");
-
-  if (btnLimitBreaksHtml && btnLimitBreaksCp && btnLimitBreaksSynchro && btnLimitBreaksOverload) {
+  if (btnLimitBreaksHtml && btnLimitBreaksCp && btnLimitBreaksSynchro && btnLimitBreaksWhale && btnLimitBreaksOverload) {
     btnLimitBreaksHtml.onclick = () => {
       btnLimitBreaksHtml.classList.add("active");
       btnLimitBreaksCp.classList.remove("active");
       btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksWhale.classList.remove("active");
       btnLimitBreaksOverload.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "block";
       state.limitBreaksSearch.style.display = "block";
       if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
       if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksWhaleChartOutput) { state.limitBreaksWhaleChartOutput.style.display = "none"; }
       if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
     };
 
@@ -165,10 +167,12 @@ export function setupToggleButtons(state: PopupState): void {
       btnLimitBreaksCp.classList.add("active");
       btnLimitBreaksHtml.classList.remove("active");
       btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksWhale.classList.remove("active");
       btnLimitBreaksOverload.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "none";
       state.limitBreaksSearch.style.display = "none";
       if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksWhaleChartOutput) { state.limitBreaksWhaleChartOutput.style.display = "none"; }
       if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
       if (state.limitBreaksCpChartOutput) {
         state.limitBreaksCpChartOutput.style.display = "block";
@@ -185,10 +189,12 @@ export function setupToggleButtons(state: PopupState): void {
       btnLimitBreaksSynchro.classList.add("active");
       btnLimitBreaksHtml.classList.remove("active");
       btnLimitBreaksCp.classList.remove("active");
+      btnLimitBreaksWhale.classList.remove("active");
       btnLimitBreaksOverload.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "none";
       state.limitBreaksSearch.style.display = "none";
       if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
+      if (state.limitBreaksWhaleChartOutput) { state.limitBreaksWhaleChartOutput.style.display = "none"; }
       if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
       if (state.limitBreaksSynchroChartOutput) {
         state.limitBreaksSynchroChartOutput.style.display = "block";
@@ -201,15 +207,39 @@ export function setupToggleButtons(state: PopupState): void {
       }
     };
 
+    btnLimitBreaksWhale.onclick = () => {
+      btnLimitBreaksWhale.classList.add("active");
+      btnLimitBreaksHtml.classList.remove("active");
+      btnLimitBreaksCp.classList.remove("active");
+      btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksOverload.classList.remove("active");
+      state.limitBreaksJsonOutput.style.display = "none";
+      state.limitBreaksSearch.style.display = "none";
+      if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
+      if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksOverloadOutput) { state.limitBreaksOverloadOutput.style.display = "none"; }
+      if (state.limitBreaksWhaleChartOutput) {
+        state.limitBreaksWhaleChartOutput.style.display = "block";
+        if (state.currentLimitBreaksData) {
+          const dataToRender = state.currentLimitBreaksData;
+          setTimeout(() => {
+            void renderLimitBreaksWhaleChart(state, dataToRender);
+          }, 10);
+        }
+      }
+    };
+
     btnLimitBreaksOverload.onclick = () => {
       btnLimitBreaksOverload.classList.add("active");
       btnLimitBreaksHtml.classList.remove("active");
       btnLimitBreaksCp.classList.remove("active");
       btnLimitBreaksSynchro.classList.remove("active");
+      btnLimitBreaksWhale.classList.remove("active");
       state.limitBreaksJsonOutput.style.display = "none";
       state.limitBreaksSearch.style.display = "none";
       if (state.limitBreaksCpChartOutput) { state.limitBreaksCpChartOutput.style.display = "none"; }
       if (state.limitBreaksSynchroChartOutput) { state.limitBreaksSynchroChartOutput.style.display = "none"; }
+      if (state.limitBreaksWhaleChartOutput) { state.limitBreaksWhaleChartOutput.style.display = "none"; }
       if (state.limitBreaksOverloadOutput) {
         state.limitBreaksOverloadOutput.style.display = "block";
         state.limitBreaksOverloadOutput.innerHTML = `

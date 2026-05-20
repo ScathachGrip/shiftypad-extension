@@ -684,12 +684,14 @@ const POPUP_HTML = `
       <button id="btnLimitBreaksHtml" class="segmented-btn active">Limit Breaks</button>
       <button id="btnLimitBreaksCp" class="segmented-btn">Combat power</button>
       <button id="btnLimitBreaksSynchro" class="segmented-btn">Synchro</button>
+      <button id="btnLimitBreaksWhale" class="segmented-btn">Whale score</button>
       <button id="btnLimitBreaksOverload" class="segmented-btn">Overload stats</button>
     </div>
     <input type="text" id="limitBreaksSearch" placeholder="Search by nickname..." style="margin-bottom: 12px; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text); outline: none; width: 100%; font-size: 13px; flex-shrink: 0;">
     <div id="limitBreaksJsonOutput" class="hide-scrollbar" style="overflow-y: auto; flex-grow: 1;"></div>
     <div id="limitBreaksCpChartOutput" style="display: none; width: 100%;"></div>
     <div id="limitBreaksSynchroChartOutput" style="display: none; width: 100%;"></div>
+    <div id="limitBreaksWhaleChartOutput" style="display: none; width: 100%;"></div>
     <div id="limitBreaksOverloadOutput" style="display: none; padding: 20px; width: 100%;"></div>
   </div>
 
