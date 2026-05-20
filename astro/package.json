@@ -1,7 +1,7 @@
 {
   "name": "shiftypad-extension-astro",
   "type": "module",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "private": true,
   "scripts": {
     "dev": "astro dev",
