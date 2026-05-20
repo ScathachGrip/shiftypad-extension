@@ -82,12 +82,12 @@ function bindSeasonSelector(
   const select = state.seasonSelect;
   const optionsContainer = state.seasonSelectOptions;
   const trigger = state.seasonSelectTrigger;
-  
+
   select.innerHTML = "";
   optionsContainer.innerHTML = "";
-  
+
   select.disabled = availableSeasons.length === 0;
-  
+
   if (availableSeasons.length === 0) {
     trigger.textContent = "No seasons available";
     return;
@@ -97,7 +97,7 @@ function bindSeasonSelector(
     const option = document.createElement("option");
     option.value = season.seasonKey;
     option.textContent = season.seasonText;
-    
+
     const customOption = document.createElement("div");
     customOption.className = "select-option";
     customOption.textContent = season.seasonText;
@@ -108,7 +108,7 @@ function bindSeasonSelector(
       trigger.textContent = season.seasonText;
       customOption.classList.add("selected");
     }
-    
+
     customOption.addEventListener("click", () => {
       select.value = season.seasonKey;
       state.customSeasonSelect.classList.remove("open");
@@ -130,10 +130,10 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     const tab = tabs[0];
     const tabId = tab?.id;
-    if (!tabId) {return;}
+    if (!tabId) { return; }
 
     const url = tab.url;
-    if (!url) {return;}
+    if (!url) { return; }
     const allowedUrl = "https://www.blablalink.com/shiftyspad/union-raid";
 
     if (!url.startsWith("https://www.blablalink.com/")) {
@@ -146,8 +146,8 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
 
     if (!url.startsWith(allowedUrl)) {
       document.body.innerHTML = `
-        <h4>Error</h4>
-        <div class="empty">This only works on ${allowedUrl} path.</div>
+        <h4>Uh</h4>
+        <div class="empty">❌ This only works on ${allowedUrl} path.</div>
       `;
       return;
     }
@@ -193,18 +193,18 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
               state.seasonSelect.addEventListener("change", () => {
                 loadMembers(state, state.seasonSelect.value);
               });
-              
+
               state.seasonSelectTrigger.addEventListener("click", (e) => {
                 e.stopPropagation();
                 state.customSeasonSelect.classList.toggle("open");
               });
-              
+
               document.addEventListener("click", (e) => {
                 if (!state.customSeasonSelect.contains(e.target as Node)) {
                   state.customSeasonSelect.classList.remove("open");
                 }
               });
-              
+
               state.seasonSelect.dataset.bound = "1";
             }
 
@@ -228,19 +228,19 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
             });
 
             state.rows = normalized;
-            
+
             // Clear current list content before re-rendering
             state.list.innerHTML = "";
-            
+
             if (normalized.length === 0) {
               const seasonLabel = res?.seasonText || state.activeSeasonText || "this season";
               state.list.innerHTML = `<div class="empty">No records found for ${seasonLabel}. Please scrape first.</div>`;
               PopupUtils.showToast(`No records found for ${seasonLabel}. Please scrape first.`);
             }
-            
+
             // Refresh the table (always updated)
             renderTable(state);
-            
+
             // Refresh any visible charts (will show empty state or clear if no rows)
             refreshVisibleCharts(state);
             return;

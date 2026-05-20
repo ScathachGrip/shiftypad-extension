@@ -52,7 +52,12 @@ chrome.runtime.onStartup.addListener(() => {
   console.log("[Background] onStartup");
 });
 
-chrome.runtime.onMessage.addListener((msg) => {
+chrome.runtime.onMessage.addListener((msg, _sender, _sendResponse) => {
+  if (msg?.action === "OPEN_POPUP") {
+    chrome.action.openPopup().catch(console.error);
+    return;
+  }
+
   if (!isLogForwardMessage(msg)) {return;}
   const prefix = `[${msg.source}]`;
   const line = `${prefix} ${msg.time}`;

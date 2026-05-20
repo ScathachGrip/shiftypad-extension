@@ -699,6 +699,8 @@ export function refreshVisibleCharts(state: PopupState): void {
       void renderLimitBreaksCpChart(state, state.currentLimitBreaksData);
     } else if (document.getElementById("btnLimitBreaksSynchro")?.classList.contains("active") && state.currentLimitBreaksData) {
       void renderLimitBreaksSynchroChart(state, state.currentLimitBreaksData);
+    } else if (document.getElementById("btnLimitBreaksWhale")?.classList.contains("active") && state.currentLimitBreaksData) {
+      void renderLimitBreaksWhaleChart(state, state.currentLimitBreaksData);
     }
     return;
   }
@@ -750,7 +752,7 @@ export async function renderLimitBreaksCpChart(state: PopupState, data: PlayerRa
   const palette = PopupUtils.getChartColors();
   const colors = palette
     ? seriesData.map((_, i) => palette[i % palette.length])
-    : seriesData.map(() => "#5b6bff");
+    : seriesData.map(() => `rgb(${Math.random() * 256 | 0},${Math.random() * 256 | 0},${Math.random() * 256 | 0})`);
 
   const options: ApexChartOptions = {
     chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
@@ -810,7 +812,7 @@ export async function renderLimitBreaksSynchroChart(state: import("../types").Po
   const palette = PopupUtils.getChartColors();
   const colors = palette
     ? seriesData.map((_, i) => palette[i % palette.length])
-    : seriesData.map(() => "#5b6bff");
+    : seriesData.map(() => `rgb(${Math.random() * 256 | 0},${Math.random() * 256 | 0},${Math.random() * 256 | 0})`);
 
   const options: import("../types").ApexChartOptions = {
     chart: { type: "bar", height: 420, width: "100%", toolbar: { show: false } },
@@ -849,4 +851,99 @@ export async function renderLimitBreaksSynchroChart(state: import("../types").Po
 
   state.apexChartLimitBreaksSynchro = new ApexCharts(state.limitBreaksSynchroChartOutput, options);
   await state.apexChartLimitBreaksSynchro.render();
+}
+
+/**
+ * Renders a bar chart showing the Whale Score for each player.
+ */
+export async function renderLimitBreaksWhaleChart(state: import("../types").PopupState, data: import("../types").PlayerRaidResult[]): Promise<void> {
+  if (state.apexChartLimitBreaksWhale) {
+    await state.apexChartLimitBreaksWhale.destroy();
+    state.apexChartLimitBreaksWhale = null;
+  }
+
+  const whaleData = data.map(playerResult => {
+    let totalWhaleScore = 0;
+    const uniqueHeroes = new Map<string, import("../types").NikkeHero>();
+
+    playerResult.rows.forEach(r => {
+      if (r.heroes) {
+        r.heroes.forEach(h => {
+          uniqueHeroes.set(h.avatarUrl, h);
+        });
+      }
+    });
+
+    uniqueHeroes.forEach(h => {
+      let score = 0;
+      if (h.finalTier === "MAX") {
+        score = 10;
+      } else if (h.finalTier.startsWith("Core")) {
+        const coreNum = parseInt(h.finalTier.replace(/[^0-9]/g, ""), 10);
+        score = 3 + (isNaN(coreNum) ? 0 : coreNum);
+      } else if (h.finalTier.startsWith("LB")) {
+        const lbNum = parseInt(h.finalTier.replace(/[^0-9]/g, ""), 10);
+        score = isNaN(lbNum) ? 0 : lbNum;
+      } else {
+        score = h.limitBreak || 0;
+      }
+      totalWhaleScore += score;
+    });
+
+    return { player: playerResult.player, score: totalWhaleScore, synchro: playerResult.synchro };
+  }).sort((a, b) => b.score - a.score);
+
+  const labels = whaleData.map(d => d.player);
+  const seriesData = whaleData.map(d => d.score);
+  const synchroData = whaleData.map(d => d.synchro);
+
+  const palette = PopupUtils.getChartColors();
+  const colors = palette
+    ? seriesData.map((_, i) => palette[i % palette.length])
+    : seriesData.map(() => `rgb(${Math.random() * 256 | 0},${Math.random() * 256 | 0},${Math.random() * 256 | 0})`);
+
+  const options: import("../types").ApexChartOptions = {
+    chart: { type: "bar", height: Math.max(420, labels.length * 36), width: "100%", toolbar: { show: false } },
+    series: [{ name: "Limit break", data: seriesData }],
+    title: {
+      text: `${state.unionName || "Union"} - Whale Score`,
+      align: "center",
+      style: { fontSize: "16px", color: PopupUtils.getStrictTitleColor() }
+    },
+    plotOptions: {
+      bar: { horizontal: true, distributed: true, barHeight: "70%", borderRadius: 4, dataLabels: { position: "top" } }
+    },
+    xaxis: {
+      categories: labels,
+      labels: {
+        formatter: (val: number) => PopupUtils.formatNumber(val),
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
+      }
+    },
+    yaxis: {
+      labels: {
+        style: { colors: colors, fontSize: "11px", fontWeight: 600 }
+      }
+    },
+    colors: colors,
+    dataLabels: {
+      enabled: true,
+      formatter: (val: number) => String(val),
+      style: { fontSize: "11px", colors: [PopupUtils.getStrictTitleColor()] },
+      offsetX: 8
+    },
+    tooltip: {
+      theme: document.body.classList.contains("theme-dark") ? "dark" : "light",
+      y: {
+        formatter: (val: number, opts: { dataPointIndex: number }) => {
+          return `${val} (Synchro: ${synchroData[opts.dataPointIndex]})`;
+        }
+      }
+    },
+    grid: { borderColor: PopupUtils.getGridColor() },
+    legend: { show: false }
+  };
+
+  state.apexChartLimitBreaksWhale = new ApexCharts(state.limitBreaksWhaleChartOutput, options);
+  await state.apexChartLimitBreaksWhale.render();
 }

@@ -33,11 +33,13 @@ class UnionRaidPopup {
   public btnResidualLow: HTMLElement;
   public btnLimitBreaks: HTMLElement;
   public btnLimitBreaksSynchro: HTMLElement;
+  public btnLimitBreaksWhale: HTMLElement;
   public btnLimitBreaksOverload: HTMLElement;
   public chartLimitBreaksContainer: HTMLElement;
   public limitBreaksJsonOutput: HTMLElement;
   public limitBreaksCpChartOutput: HTMLElement;
   public limitBreaksSynchroChartOutput: HTMLElement;
+  public limitBreaksWhaleChartOutput: HTMLElement;
   public limitBreaksOverloadOutput: HTMLElement;
   public limitBreaksSearch: HTMLInputElement;
   public scrapeBtn: HTMLButtonElement | null;
@@ -66,6 +68,7 @@ class UnionRaidPopup {
   public apexChartTopDrawer: ApexChartInstance | null = null;
   public apexChartLimitBreaksCp: ApexChartInstance | null = null;
   public apexChartLimitBreaksSynchro: ApexChartInstance | null = null;
+  public apexChartLimitBreaksWhale: ApexChartInstance | null = null;
   public unionName: string = "";
   public activeSeasonKey: string = "";
   public activeSeasonText: string = "";
@@ -98,11 +101,13 @@ class UnionRaidPopup {
     this.btnResidualLow = getEl("btnResidualLow");
     this.btnLimitBreaks = getEl("btnLimitBreaks");
     this.btnLimitBreaksSynchro = getEl("btnLimitBreaksSynchro");
+    this.btnLimitBreaksWhale = getEl("btnLimitBreaksWhale");
     this.btnLimitBreaksOverload = getEl("btnLimitBreaksOverload");
     this.chartLimitBreaksContainer = getEl("chartLimitBreaksContainer");
     this.limitBreaksJsonOutput = getEl("limitBreaksJsonOutput");
     this.limitBreaksCpChartOutput = getEl("limitBreaksCpChartOutput");
     this.limitBreaksSynchroChartOutput = getEl("limitBreaksSynchroChartOutput");
+    this.limitBreaksWhaleChartOutput = getEl("limitBreaksWhaleChartOutput");
     this.limitBreaksOverloadOutput = getEl("limitBreaksOverloadOutput");
     this.limitBreaksSearch = getEl("limitBreaksSearch") as HTMLInputElement;
     this.scrapeBtn = document.getElementById("scrapeBtn") as HTMLButtonElement | null;
