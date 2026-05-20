@@ -27,9 +27,9 @@ export function showCustomAlert(message: string, imagePath?: string): Promise<vo
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes sr-modal-scale-in {
-          from { transform: scale(0.92); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+        @keyframes sr-modal-slide-up {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
       `;
       document.head.appendChild(fontStyle);
@@ -64,7 +64,7 @@ export function showCustomAlert(message: string, imagePath?: string): Promise<vo
       flex-direction: column;
       align-items: center;
       gap: 24px;
-      animation: sr-modal-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: sr-modal-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     `;
 
     if (imagePath) {
@@ -159,9 +159,9 @@ export function showCustomConfirm(message: string): Promise<boolean> {
           from { opacity: 0; }
           to { opacity: 1; }
         }
-        @keyframes sr-modal-scale-in {
-          from { transform: scale(0.92); opacity: 0; }
-          to { transform: scale(1); opacity: 1; }
+        @keyframes sr-modal-slide-up {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
       `;
       document.head.appendChild(fontStyle);
@@ -196,7 +196,7 @@ export function showCustomConfirm(message: string): Promise<boolean> {
       flex-direction: column;
       align-items: center;
       gap: 24px;
-      animation: sr-modal-scale-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: sr-modal-slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     `;
 
     const text = document.createElement("div");
