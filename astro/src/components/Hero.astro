@@ -1,11 +1,4 @@
 ---
-import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
-import { fileURLToPath } from "node:url";
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const manifestPath = resolve(__dirname, "../../../manifest.json");
-const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
-const versionTag = manifest.version_name || `v${manifest.version}`;
 ---
 
 <section class="hero">
@@ -14,7 +7,6 @@ const versionTag = manifest.version_name || `v${manifest.version}`;
   </div>
   <div class="container hero-inner">
     <div class="hero-text">
-      <span class="tag">📦 {versionTag}</span>
       <h1>
         Union Raid data,<br /><span class="gradient-text"
           >right where you need it.</span>
