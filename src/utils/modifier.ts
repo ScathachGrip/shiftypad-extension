@@ -387,13 +387,15 @@ async function scrapeUnionRaidAllModals(
       let synchro = 0;
 
       if (firstCard) {
-        const lvEl = Array.from(firstCard.querySelectorAll("div"))
-          .find(el => /^LV\.\d+/.test(el.textContent?.trim() ?? ""));
+        const lvEl = firstCard.querySelector<HTMLElement>(".squad-avatar__level") ||
+          Array.from(firstCard.querySelectorAll("span, div"))
+            .find(el => /^LV\.\d+/i.test(el.textContent?.trim() ?? ""));
 
         debugLvText = lvEl?.textContent?.trim();
 
         if (debugLvText) {
-          synchro = parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
+          const lvMatch = debugLvText.match(/LV\.(\d+)/i);
+          synchro = lvMatch ? parseInt(lvMatch[1], 10) : parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
         }
       }
 
@@ -431,7 +433,7 @@ async function scrapeUnionRaidAllModals(
 
     if (isUnionRaidPage()) {
       const seasonText = passedSeasonText || getCurrentSeasonText();
-      const seasonKey = passedSeasonKey || seasonTextToKey(seasonText);
+      const seasonKey = passedSeasonKey || seasonTextToKey(seasonText) || "SEASON_CURRENT";
 
       const seasonedKey = getSeasonedCacheKey(seasonKey);
       if (!seasonedKey) {
@@ -464,9 +466,11 @@ async function scrapeUnionRaidAllModals(
         "All set! You can interact with Shiftypad Extension dashboard.",
         "assets/interact.png"
       );
-      chrome.runtime.sendMessage({ action: "OPEN_POPUP" }).catch(err => {
+      try {
+        void chrome.runtime.sendMessage({ action: "OPEN_POPUP" });
+      } catch (err) {
         console.log("Failed to auto-open popup:", err);
-      });
+      }
     }
   } finally {
     spinner.remove();
@@ -485,7 +489,7 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
 
   const rowBlocks = Array.from(
     modal.querySelectorAll<HTMLElement>(
-      "div.w-full.bg-\\[\\#f4f4f4\\].h-\\[150px\\]"
+      "div.w-full.bg-\\[\\#f4f4f4\\]"
     )
   );
 
@@ -520,10 +524,12 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
       const damage = Number(damageText.replace(/,/g, ""));
 
       const heroes: import("../types").NikkeHero[] = [];
-      const heroContainers = block.querySelectorAll("div.relative.mr-\\[5px\\].w-\\[52px\\]");
+      const heroContainers = block.querySelectorAll(
+        "div[data-cname='raid-squad-avatar'], div.relative.mr-\\[5px\\]"
+      );
 
       heroContainers.forEach((hero, index) => {
-        const avatarImg = hero.querySelector("img[alt^='Avatar']");
+        const avatarImg = hero.querySelector("img[alt^='Avatar'], img[loading='lazy']");
         const avatarName = avatarImg ? avatarImg.getAttribute("alt") || `Hero ${index + 1}` : `Hero ${index + 1}`;
         const avatarUrl = avatarImg ? avatarImg.getAttribute("src") || "Unknown URL" : "Unknown URL";
 
@@ -546,12 +552,17 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
           finalTier = `Core ${coreText}`;
         }
 
-        const cpContainer = hero.querySelector(".text-\\[var\\(--text-3\\)\\].text-\\[9px\\]");
+        const cpContainer = hero.querySelector(
+          ".squad-avatar__combat-value, .text-\\[var\\(--text-3\\)\\]"
+        );
         const cp = cpContainer ? cpContainer.textContent?.trim() || "Unknown CP" : "Unknown CP";
 
-        const levelContainer = hero.querySelector(".bg-gradient-to-b > div");
+        const levelContainer = hero.querySelector(
+          ".squad-avatar__level, .bg-gradient-to-b > div"
+        );
         const synchroLevelText = levelContainer ? levelContainer.textContent?.trim() || "LV.0" : "LV.0";
-        const synchroLevel = parseInt(synchroLevelText.replace(/[^0-9]/g, ""), 10) || 0;
+        const synchroMatch = synchroLevelText.match(/LV\.(\d+)/i);
+        const synchroLevel = synchroMatch ? parseInt(synchroMatch[1], 10) : parseInt(synchroLevelText.replace(/[^0-9]/g, ""), 10) || 0;
 
         heroes.push({
           avatarName,
@@ -613,9 +624,42 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
  * Closes the player modal by finding the active overlay and clicking it.
  */
 async function closeModal(modal: HTMLElement): Promise<boolean> {
-  console.log("Attempting to close modal via simple DOM relation clicks...");
+  console.log("Attempting to close modal via outside click & dismissal...");
 
-  // 1. If the backdrop is a sibling (very common in Tailwind/Vue headless setups)
+  // 1. Simulate real user click outside near top center of the screen
+  const clickX = Math.max(10, Math.round(window.innerWidth / 2));
+  const clickY = 20;
+  const outsideTarget = (typeof document.elementFromPoint === "function"
+    ? document.elementFromPoint(clickX, clickY)
+    : null) || document.body;
+
+  const eventOpts: MouseEventInit = {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: clickX,
+    clientY: clickY,
+  };
+
+  try {
+    outsideTarget.dispatchEvent(new PointerEvent("pointerdown", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("mousedown", eventOpts));
+    outsideTarget.dispatchEvent(new PointerEvent("pointerup", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("mouseup", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("click", eventOpts));
+  } catch {
+    (outsideTarget as HTMLElement).click();
+  }
+
+  // 2. Escape key fallback
+  try {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent("keyup", { key: "Escape", code: "Escape", bubbles: true }));
+  } catch {
+    // ignore keyboard error in test environments
+  }
+
+  // 3. Fallback: Sibling/parent overlay clicks
   let prev = modal.previousElementSibling as HTMLElement;
   while (prev) {
     prev.click();
@@ -628,10 +672,8 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
     next = next.nextElementSibling as HTMLElement;
   }
 
-  // 2. If the backdrop is the parent wrapper
   modal.parentElement?.click();
 
-  // 3. Fallback to known framework overlay classes
   const overlays = document.querySelectorAll(".van-overlay, .el-overlay, [class*=\"overlay\"], [class*=\"backdrop\"]");
   overlays.forEach(overlay => {
     const el = overlay as HTMLElement;
@@ -643,7 +685,14 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
   // Wait for transition
   let closed = false;
   for (let j = 0; j < 20; j++) {
-    if (!document.body.contains(modal) || modal.offsetWidth === 0 || window.getComputedStyle(modal).display === "none") {
+    const style = window.getComputedStyle(modal);
+    if (
+      !document.body.contains(modal) ||
+      modal.offsetWidth === 0 ||
+      style.display === "none" ||
+      style.visibility === "hidden" ||
+      style.opacity === "0"
+    ) {
       closed = true;
       break;
     }
@@ -694,8 +743,7 @@ function getCacheKey(): string {
 }
 
 function getSeasonedCacheKey(seasonKey?: string): string {
-  const resolvedSeasonKey = seasonKey ?? getCurrentSeasonKey();
-  if (!resolvedSeasonKey) { return ""; }
+  const resolvedSeasonKey = seasonKey || getCurrentSeasonKey() || "SEASON_CURRENT";
   return `${getCacheKey()}__${resolvedSeasonKey}`;
 }
 

@@ -475,6 +475,15 @@ class UnionRaidScraper {
       return; // stop execution if user cancels
     }
 
+    // Ensure the page is in Classic/Mobile layout
+    const pcSwitchBtn = document.querySelector<HTMLButtonElement>("button[data-cname='pc-layout-switch']");
+    const pcSwitchLabel = (pcSwitchBtn?.getAttribute("aria-label") || pcSwitchBtn?.getAttribute("title") || "").toLowerCase();
+    if (pcSwitchBtn && pcSwitchLabel.includes("classic")) {
+      console.log("[Content] Modern PC Layout detected. Switching to Classic/Mobile layout...");
+      pcSwitchBtn.click();
+      await new Promise(r => setTimeout(r, 600));
+    }
+
     console.clear();
     this.isStopRequested = false;
     this.isScrapingInProgress = true;
