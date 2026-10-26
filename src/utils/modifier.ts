@@ -604,7 +604,7 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
 
     const timer = setInterval(() => {
       const modal = document.querySelector<HTMLElement>(
-        "div.absolute.bottom-0.w-full"
+        "div.box-border.max-h-\\[90vh\\], div.absolute.bottom-0.w-full, div.pointer-events-auto.max-h-\\[90vh\\]"
       );
 
       if (modal) {
@@ -626,9 +626,12 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
 async function closeModal(modal: HTMLElement): Promise<boolean> {
   console.log("Attempting to close modal via outside click & dismissal...");
 
-  // 1. Simulate real user click outside near top center of the screen
-  const clickX = Math.max(10, Math.round(window.innerWidth / 2));
-  const clickY = 20;
+  // 1. Simulate real user click outside the modal
+  // On Desktop, the dialog is centered (max-width 720px), so (10, 10) reliably hits the backdrop.
+  // On Mobile, the drawer is at the bottom, so top-center (window.innerWidth / 2, 20) hits the backdrop.
+  const isDesktopWidth = window.innerWidth > 760;
+  const clickX = isDesktopWidth ? 10 : Math.max(10, Math.round(window.innerWidth / 2));
+  const clickY = isDesktopWidth ? 10 : 20;
   const outsideTarget = (typeof document.elementFromPoint === "function"
     ? document.elementFromPoint(clickX, clickY)
     : null) || document.body;
