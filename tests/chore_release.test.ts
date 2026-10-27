@@ -1,5 +1,8 @@
 import { expect, test, describe } from "bun:test";
-import { calculateNextVersion, calculateVersionName } from "../ci/chore_release";
+import { calculateNextVersion, calculateVersionName, bumpRelease } from "../ci/chore_release";
+import { mkdtempSync, rmSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 
 describe("chore_release", () => {
   describe("calculateNextVersion", () => {
@@ -48,4 +51,48 @@ describe("chore_release", () => {
       expect(calculateVersionName("0.1.10", null, undefined)).toBe("0.1.10");
     });
   });
+
+  describe("bumpRelease", () => {
+    test("updates package.json, manifest.json, and astro/package.json to the same version", async () => {
+      const tempDir = mkdtempSync(join(tmpdir(), "shiftypad-test-"));
+      try {
+        const pkgContent = JSON.stringify({ name: "test-pkg", version: "0.1.13" }, null, 2);
+        const manifestContent = JSON.stringify(
+          { name: "test-manifest", version: "0.1.13", version_name: "0.1.13" },
+          null,
+          2
+        );
+        const astroDir = join(tempDir, "astro");
+        mkdirSync(astroDir, { recursive: true });
+        const astroPkgContent = JSON.stringify({ name: "astro-pkg", version: "0.1.13" }, null, 2);
+
+        await Bun.write(join(tempDir, "package.json"), pkgContent);
+        await Bun.write(join(tempDir, "manifest.json"), manifestContent);
+        await Bun.write(join(astroDir, "package.json"), astroPkgContent);
+
+        const result = await bumpRelease({ rootDir: tempDir });
+
+        expect(result.oldVersion).toBe("0.1.13");
+        expect(result.newVersion).toBe("0.1.14");
+        expect(result.astroVersion).toBe("0.1.14");
+
+        const updatedPkg = JSON.parse(await Bun.file(join(tempDir, "package.json")).text()) as {
+          version: string;
+        };
+        const updatedManifest = JSON.parse(
+          await Bun.file(join(tempDir, "manifest.json")).text()
+        ) as { version: string };
+        const updatedAstroPkg = JSON.parse(
+          await Bun.file(join(astroDir, "package.json")).text()
+        ) as { version: string };
+
+        expect(updatedPkg.version).toBe("0.1.14");
+        expect(updatedManifest.version).toBe("0.1.14");
+        expect(updatedAstroPkg.version).toBe("0.1.14");
+      } finally {
+        rmSync(tempDir, { recursive: true, force: true });
+      }
+    });
+  });
 });
+

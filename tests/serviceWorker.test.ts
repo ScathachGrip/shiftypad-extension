@@ -90,9 +90,13 @@ describe("Service Worker", () => {
     expect(typeof messageCb).toBe("function");
 
     // OPEN_POPUP
+    const openPopupSpy = spyOn(chrome.action, "openPopup").mockResolvedValue(undefined);
     messageCb?.({ action: "OPEN_POPUP" }, {}, () => {});
+    expect(openPopupSpy).toHaveBeenCalledTimes(1);
+    openPopupSpy.mockRestore();
 
-    // LOG_FORWARD valid
+    // LOG_FORWARD valid with specific level
+    const infoSpy = spyOn(console, "info").mockImplementation(() => {});
     messageCb?.({
       type: "LOG_FORWARD",
       source: "Popup",
@@ -100,8 +104,11 @@ describe("Service Worker", () => {
       time: "12:00:00",
       args: ["Hello from test"]
     }, {}, () => {});
+    expect(infoSpy).toHaveBeenCalledWith("[Popup] 12:00:00", "Hello from test");
+    infoSpy.mockRestore();
 
-    // LOG_FORWARD with fallback logger
+    // LOG_FORWARD with fallback logger when level is unknown
+    logSpy.mockClear();
     messageCb?.({
       type: "LOG_FORWARD",
       source: "Content",
@@ -109,13 +116,16 @@ describe("Service Worker", () => {
       time: "12:00:01",
       args: ["Fallback logger"]
     }, {}, () => {});
+    expect(logSpy).toHaveBeenCalledWith("[Content] 12:00:01", "Fallback logger");
 
-    // Invalid LOG_FORWARD payloads
+    // Invalid LOG_FORWARD payloads should be rejected and not trigger any logger
+    logSpy.mockClear();
     messageCb?.({ type: "LOG_FORWARD", source: 123 }, {}, () => {});
     messageCb?.({ type: "LOG_FORWARD", level: "info" }, {}, () => {});
     messageCb?.({ type: "LOG_FORWARD", level: "info", source: "A", time: "B", args: "not-array" }, {}, () => {});
     messageCb?.(null, {}, () => {});
     messageCb?.("invalid", {}, () => {});
+    expect(logSpy).not.toHaveBeenCalled();
 
     // Clean up
     self.addEventListener = origAddEventListener;

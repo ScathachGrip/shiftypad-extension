@@ -93,8 +93,9 @@ Blablalink provides a dual-interface architecture featuring a dynamic switch bet
 
 ## Testing
 
-[![Code Coverage](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension/coverage.svg)](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension)  
 The current coverages is not done yet, you can check `/tests` directory.
+
+[![Code Coverage](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension/coverage.svg)](https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension)
 
 ## Debugging
 
