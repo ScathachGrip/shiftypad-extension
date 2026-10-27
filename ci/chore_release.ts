@@ -53,15 +53,20 @@ export function calculateVersionName(
   return newVersion;
 }
 
-export async function bumpRelease(options?: { customVersion?: string }): Promise<{
+export async function bumpRelease(options?: {
+  customVersion?: string;
+  rootDir?: string;
+}): Promise<{
   oldVersion: string;
   newVersion: string;
   newVersionName?: string;
+  astroVersion?: string;
 }> {
-  const root = join(import.meta.dir, "..");
+  const root = options?.rootDir ?? join(import.meta.dir, "..");
   const pkgPath = join(root, "package.json");
   const manifestPath = join(root, "manifest.json");
   const cachePath = join(root, ".aegisVersionCache.json");
+  const astroPkgPath = join(root, "astro", "package.json");
 
   // 1. Read package.json
   const pkgRaw = await Bun.file(pkgPath).text();
@@ -111,14 +116,29 @@ export async function bumpRelease(options?: { customVersion?: string }): Promise
     await Bun.write(manifestPath, manifestUpdated);
   }
 
-  return { oldVersion, newVersion, newVersionName };
+  // 3. Read and update astro/package.json
+  let astroVersion: string | undefined;
+  if (existsSync(astroPkgPath)) {
+    const astroRaw = await Bun.file(astroPkgPath).text();
+    const astroUpdated = astroRaw.replace(
+      /"version":\s*"[^"]+"/,
+      `"version": "${newVersion}"`
+    );
+    await Bun.write(astroPkgPath, astroUpdated);
+    astroVersion = newVersion;
+  }
+
+  return { oldVersion, newVersion, newVersionName, astroVersion };
 }
 
 if (import.meta.main) {
   const customVersion = process.argv[2]?.startsWith("-") ? undefined : process.argv[2];
-  const { oldVersion, newVersion, newVersionName } = await bumpRelease({ customVersion });
+  const { oldVersion, newVersion, newVersionName, astroVersion } = await bumpRelease({ customVersion });
 
   console.log(`[chore:release] Bumped version: ${oldVersion} -> ${newVersion}`);
+  if (astroVersion) {
+    console.log(`[chore:release] Updated astro/package.json version: ${astroVersion}`);
+  }
   if (newVersionName) {
     console.log(`[chore:release] Updated manifest.version_name: ${newVersionName}`);
   }
