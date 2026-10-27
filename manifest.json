@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "shiftypad-extension",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "description": "Blablalink extension with Union Raid data focused.",
   "permissions": [
     "activeTab",
@@ -57,5 +57,5 @@
       ]
     }
   ],
-  "version_name": "0.1.14-ar_eg_5w-aegis.14360"
+  "version_name": "0.1.15-ar_eg_5w-aegis.14360"
 }
