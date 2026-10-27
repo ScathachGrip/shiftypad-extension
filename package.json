@@ -1,6 +1,6 @@
 {
   "name": "shiftypad-extension",
-  "version": "0.1.13",
+  "version": "0.1.14",
   "description": "Blablalink extension with Union Raid data focused.",
   "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
   "repository": {
