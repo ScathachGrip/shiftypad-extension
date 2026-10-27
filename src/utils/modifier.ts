@@ -626,7 +626,34 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
 async function closeModal(modal: HTMLElement): Promise<boolean> {
   console.log("Attempting to close modal via outside click & dismissal...");
 
-  // 1. Simulate real user click outside the modal
+  // 1. Direct Blablalink popbox backdrop mask click
+  // In Blablalink (popbox component), the mask is rendered inside the fixed wrapper with class bg-[var(--color-black-55)]
+  const fixedContainer = modal.closest("div.fixed.bottom-0, div.fixed.inset-0, div.fixed") || modal.parentElement?.parentElement;
+  const mask = fixedContainer?.querySelector<HTMLElement>(
+    "div.absolute.top-0.h-full.w-full, div[class*='color-black-55'], div[class*='bg-black']"
+  ) || document.querySelector<HTMLElement>(
+    "div.fixed div.absolute.top-0.h-full.w-full, div[class*='color-black-55']"
+  );
+
+  if (mask) {
+    try {
+      mask.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    } catch {
+      mask.click();
+    }
+  }
+
+  // 2. Direct close button inside modal (if present)
+  const closeBtn = modal.querySelector<HTMLElement>("button, span[data-cname*='close'], div[class*='close']");
+  if (closeBtn) {
+    closeBtn.click();
+  }
+
+  // 3. Simulate real user click outside the modal
   // On Desktop, the dialog is centered (max-width 720px), so (10, 10) reliably hits the backdrop.
   // On Mobile, the drawer is at the bottom, so top-center (window.innerWidth / 2, 20) hits the backdrop.
   const isDesktopWidth = window.innerWidth > 760;
@@ -654,7 +681,7 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
     (outsideTarget as HTMLElement).click();
   }
 
-  // 2. Escape key fallback
+  // 4. Escape key fallback
   try {
     document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
     document.dispatchEvent(new KeyboardEvent("keyup", { key: "Escape", code: "Escape", bubbles: true }));
@@ -662,7 +689,7 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
     // ignore keyboard error in test environments
   }
 
-  // 3. Fallback: Sibling/parent overlay clicks
+  // 5. Fallback: Sibling/parent overlay clicks
   let prev = modal.previousElementSibling as HTMLElement;
   while (prev) {
     prev.click();
