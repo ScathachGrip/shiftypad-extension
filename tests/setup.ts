@@ -105,6 +105,21 @@ global.ApexCharts = class {
 global.alert = () => {};
 global.confirm = () => true;
 
+// Auto-dismiss custom alerts in test environments
+const alertObserver = new win.MutationObserver((mutations: any[]) => {
+  for (const m of mutations) {
+    for (const node of m.addedNodes) {
+      if (node.nodeType === 1) {
+        const btn = (node as HTMLElement).querySelector?.("button");
+        if (btn) {
+          setTimeout(() => btn.click(), 10);
+        }
+      }
+    }
+  }
+});
+alertObserver.observe(win.document.body, { childList: true, subtree: true });
+
 // Canvas Mock
 const originalCreateElement = win.document.createElement.bind(win.document);
 win.document.createElement = (tagName: string) => {

@@ -694,7 +694,7 @@ export function refreshVisibleCharts(state: PopupState): void {
     renderAvgDamageChart(state);
     return;
   }
-  if (state.chartLimitBreaksContainer.style.display === "flex") {
+  if (state.chartLimitBreaksContainer?.style?.display === "flex") {
     if (document.getElementById("btnLimitBreaksCp")?.classList.contains("active") && state.currentLimitBreaksData) {
       void renderLimitBreaksCpChart(state, state.currentLimitBreaksData);
     } else if (document.getElementById("btnLimitBreaksSynchro")?.classList.contains("active") && state.currentLimitBreaksData) {
@@ -704,8 +704,8 @@ export function refreshVisibleCharts(state: PopupState): void {
     }
     return;
   }
-  if (state.chartTopDrawerContainer.style.display === "block") {
-    const isLow = state.btnResidualLow.classList.contains("active");
+  if (state.chartTopDrawerContainer?.style?.display === "block") {
+    const isLow = state.btnResidualLow?.classList?.contains("active");
     renderTopDrawerChart(state, isLow ? "low" : "top");
     return;
   }

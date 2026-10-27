@@ -112,7 +112,7 @@ export function setupExportButton(state: PopupState): void {
       chrome.storage.local.get(storageKey, (res) => {
         const data = res[storageKey];
         if (!data || !data.length) {
-          alert("No data to export. Please scrape first.");
+          alert("No data to export. Please scrape first at bottom screen shiftypad button");
           return;
         }
         cb(data);

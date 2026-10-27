@@ -1,3 +1,16 @@
+const Module = require("module");
+const originalLoad = Module._load;
+Module._load = function (request, parent, isMain) {
+  if (request === "typescript") {
+    try {
+      return originalLoad.call(this, "@typescript/typescript6", parent, isMain);
+    } catch {
+      // fallback to default
+    }
+  }
+  return originalLoad.apply(this, arguments);
+};
+
 const tsParser = require("@typescript-eslint/parser");
 const tsPlugin = require("@typescript-eslint/eslint-plugin");
 const path = require("path");
@@ -14,9 +27,30 @@ function getRealProjectRoot(currentDir) {
 
 const root = getRealProjectRoot(__dirname);
 
-module.exports = [
+module.exports = (async () => {
+  const astroModule = await import("eslint-plugin-astro");
+  const astroPlugin = astroModule.default || astroModule;
+
+  return [
+    {
+      ignores: [
+        "node_modules/**",
+        "build/**",
+        "dist/**",
+        "astro/dist/**",
+        "astro/.astro/**",
+        "coverage/**",
+      ],
+    },
+    ...astroPlugin.configs["flat/recommended"],
   {
-    ignores: ["node_modules/**", "build/**", "dist/**", "astro/**"],
+    files: ["**/*.astro"],
+    languageOptions: {
+      parserOptions: {
+        parser: tsParser,
+        extraFileExtensions: [".astro"],
+      },
+    },
   },
   {
     files: ["**/*.ts", "**/*.tsx"],
@@ -69,4 +103,5 @@ module.exports = [
       "prefer-const": "error",
     },
   },
-];
+  ];
+})();

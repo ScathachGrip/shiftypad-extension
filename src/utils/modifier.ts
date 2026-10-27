@@ -310,6 +310,10 @@ async function scrapeUnionRaidAllModals(
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     backdrop-filter: blur(4px);
   `;
+
+  const currentUnion = scrapeUnionName();
+  const initialText = currentUnion ? `Extracting ${currentUnion} data .. 0%` : "Extracting data .. 0%";
+
   spinner.innerHTML = `
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <style>
@@ -330,7 +334,7 @@ async function scrapeUnionRaidAllModals(
         <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
       </g>
     </svg>
-    <span id="shiftypad-scrape-text">Extracting data .. 0%</span>
+    <span id="shiftypad-scrape-text">${initialText}</span>
   `;
   document.body.appendChild(spinner);
 
@@ -349,12 +353,12 @@ async function scrapeUnionRaidAllModals(
       if (stopRequested) { break; }
 
       const progress = Math.round((i / buttons.length) * 100);
+      const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
       const textEl = document.getElementById("shiftypad-scrape-text");
       if (textEl) {
-        textEl.textContent = `Extracting data .. ${progress}%`;
+        const playerLabel = expectedPlayerName ? `${expectedPlayerName} (${i + 1}/${buttons.length})` : `${i + 1}/${buttons.length}`;
+        textEl.textContent = `Extracting ${playerLabel} .. ${progress}%`;
       }
-
-      const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
 
       console.log(`💥 Click ${i + 1}/${buttons.length} (Expected: ${expectedPlayerName})`);
       buttons[i].click();
@@ -387,13 +391,15 @@ async function scrapeUnionRaidAllModals(
       let synchro = 0;
 
       if (firstCard) {
-        const lvEl = Array.from(firstCard.querySelectorAll("div"))
-          .find(el => /^LV\.\d+/.test(el.textContent?.trim() ?? ""));
+        const lvEl = firstCard.querySelector<HTMLElement>(".squad-avatar__level") ||
+          Array.from(firstCard.querySelectorAll("span, div"))
+            .find(el => /^LV\.\d+/i.test(el.textContent?.trim() ?? ""));
 
         debugLvText = lvEl?.textContent?.trim();
 
         if (debugLvText) {
-          synchro = parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
+          const lvMatch = debugLvText.match(/LV\.(\d+)/i);
+          synchro = lvMatch ? parseInt(lvMatch[1], 10) : parseInt(debugLvText.replace(/\D+/g, ""), 10) || 0;
         }
       }
 
@@ -431,7 +437,7 @@ async function scrapeUnionRaidAllModals(
 
     if (isUnionRaidPage()) {
       const seasonText = passedSeasonText || getCurrentSeasonText();
-      const seasonKey = passedSeasonKey || seasonTextToKey(seasonText);
+      const seasonKey = passedSeasonKey || seasonTextToKey(seasonText) || "SEASON_CURRENT";
 
       const seasonedKey = getSeasonedCacheKey(seasonKey);
       if (!seasonedKey) {
@@ -464,9 +470,11 @@ async function scrapeUnionRaidAllModals(
         "All set! You can interact with Shiftypad Extension dashboard.",
         "assets/interact.png"
       );
-      chrome.runtime.sendMessage({ action: "OPEN_POPUP" }).catch(err => {
+      try {
+        void chrome.runtime.sendMessage({ action: "OPEN_POPUP" });
+      } catch (err) {
         console.log("Failed to auto-open popup:", err);
-      });
+      }
     }
   } finally {
     spinner.remove();
@@ -485,7 +493,7 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
 
   const rowBlocks = Array.from(
     modal.querySelectorAll<HTMLElement>(
-      "div.w-full.bg-\\[\\#f4f4f4\\].h-\\[150px\\]"
+      "div.w-full.bg-\\[\\#f4f4f4\\]"
     )
   );
 
@@ -520,10 +528,12 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
       const damage = Number(damageText.replace(/,/g, ""));
 
       const heroes: import("../types").NikkeHero[] = [];
-      const heroContainers = block.querySelectorAll("div.relative.mr-\\[5px\\].w-\\[52px\\]");
+      const heroContainers = block.querySelectorAll(
+        "div[data-cname='raid-squad-avatar'], div.relative.mr-\\[5px\\]"
+      );
 
       heroContainers.forEach((hero, index) => {
-        const avatarImg = hero.querySelector("img[alt^='Avatar']");
+        const avatarImg = hero.querySelector("img[alt^='Avatar'], img[loading='lazy']");
         const avatarName = avatarImg ? avatarImg.getAttribute("alt") || `Hero ${index + 1}` : `Hero ${index + 1}`;
         const avatarUrl = avatarImg ? avatarImg.getAttribute("src") || "Unknown URL" : "Unknown URL";
 
@@ -546,12 +556,17 @@ function extractRowsFromModal(modal: HTMLElement): RaidDamageRow[] {
           finalTier = `Core ${coreText}`;
         }
 
-        const cpContainer = hero.querySelector(".text-\\[var\\(--text-3\\)\\].text-\\[9px\\]");
+        const cpContainer = hero.querySelector(
+          ".squad-avatar__combat-value, .text-\\[var\\(--text-3\\)\\]"
+        );
         const cp = cpContainer ? cpContainer.textContent?.trim() || "Unknown CP" : "Unknown CP";
 
-        const levelContainer = hero.querySelector(".bg-gradient-to-b > div");
+        const levelContainer = hero.querySelector(
+          ".squad-avatar__level, .bg-gradient-to-b > div"
+        );
         const synchroLevelText = levelContainer ? levelContainer.textContent?.trim() || "LV.0" : "LV.0";
-        const synchroLevel = parseInt(synchroLevelText.replace(/[^0-9]/g, ""), 10) || 0;
+        const synchroMatch = synchroLevelText.match(/LV\.(\d+)/i);
+        const synchroLevel = synchroMatch ? parseInt(synchroMatch[1], 10) : parseInt(synchroLevelText.replace(/[^0-9]/g, ""), 10) || 0;
 
         heroes.push({
           avatarName,
@@ -593,7 +608,7 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
 
     const timer = setInterval(() => {
       const modal = document.querySelector<HTMLElement>(
-        "div.absolute.bottom-0.w-full"
+        "div.box-border.max-h-\\[90vh\\], div.absolute.bottom-0.w-full, div.pointer-events-auto.max-h-\\[90vh\\]"
       );
 
       if (modal) {
@@ -613,9 +628,72 @@ function waitForModalAppear(): Promise<HTMLElement | null> {
  * Closes the player modal by finding the active overlay and clicking it.
  */
 async function closeModal(modal: HTMLElement): Promise<boolean> {
-  console.log("Attempting to close modal via simple DOM relation clicks...");
+  console.log("Attempting to close modal via outside click & dismissal...");
 
-  // 1. If the backdrop is a sibling (very common in Tailwind/Vue headless setups)
+  // 1. Direct Blablalink popbox backdrop mask click
+  // In Blablalink (popbox component), the mask is rendered inside the fixed wrapper with class bg-[var(--color-black-55)]
+  const fixedContainer = modal.closest("div.fixed.bottom-0, div.fixed.inset-0, div.fixed") || modal.parentElement?.parentElement;
+  const mask = fixedContainer?.querySelector<HTMLElement>(
+    "div.absolute.top-0.h-full.w-full, div[class*='color-black-55'], div[class*='bg-black']"
+  ) || document.querySelector<HTMLElement>(
+    "div.fixed div.absolute.top-0.h-full.w-full, div[class*='color-black-55']"
+  );
+
+  if (mask) {
+    try {
+      mask.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("mousedown", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new PointerEvent("pointerup", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("mouseup", { bubbles: true, cancelable: true, view: window }));
+      mask.dispatchEvent(new MouseEvent("click", { bubbles: true, cancelable: true, view: window }));
+    } catch {
+      mask.click();
+    }
+  }
+
+  // 2. Direct close button inside modal (if present)
+  const closeBtn = modal.querySelector<HTMLElement>("button, span[data-cname*='close'], div[class*='close']");
+  if (closeBtn) {
+    closeBtn.click();
+  }
+
+  // 3. Simulate real user click outside the modal
+  // On Desktop, the dialog is centered (max-width 720px), so (10, 10) reliably hits the backdrop.
+  // On Mobile, the drawer is at the bottom, so top-center (window.innerWidth / 2, 20) hits the backdrop.
+  const isDesktopWidth = window.innerWidth > 760;
+  const clickX = isDesktopWidth ? 10 : Math.max(10, Math.round(window.innerWidth / 2));
+  const clickY = isDesktopWidth ? 10 : 20;
+  const outsideTarget = (typeof document.elementFromPoint === "function"
+    ? document.elementFromPoint(clickX, clickY)
+    : null) || document.body;
+
+  const eventOpts: MouseEventInit = {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: clickX,
+    clientY: clickY,
+  };
+
+  try {
+    outsideTarget.dispatchEvent(new PointerEvent("pointerdown", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("mousedown", eventOpts));
+    outsideTarget.dispatchEvent(new PointerEvent("pointerup", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("mouseup", eventOpts));
+    outsideTarget.dispatchEvent(new MouseEvent("click", eventOpts));
+  } catch {
+    (outsideTarget as HTMLElement).click();
+  }
+
+  // 4. Escape key fallback
+  try {
+    document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", code: "Escape", bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent("keyup", { key: "Escape", code: "Escape", bubbles: true }));
+  } catch {
+    // ignore keyboard error in test environments
+  }
+
+  // 5. Fallback: Sibling/parent overlay clicks
   let prev = modal.previousElementSibling as HTMLElement;
   while (prev) {
     prev.click();
@@ -628,10 +706,8 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
     next = next.nextElementSibling as HTMLElement;
   }
 
-  // 2. If the backdrop is the parent wrapper
   modal.parentElement?.click();
 
-  // 3. Fallback to known framework overlay classes
   const overlays = document.querySelectorAll(".van-overlay, .el-overlay, [class*=\"overlay\"], [class*=\"backdrop\"]");
   overlays.forEach(overlay => {
     const el = overlay as HTMLElement;
@@ -643,7 +719,14 @@ async function closeModal(modal: HTMLElement): Promise<boolean> {
   // Wait for transition
   let closed = false;
   for (let j = 0; j < 20; j++) {
-    if (!document.body.contains(modal) || modal.offsetWidth === 0 || window.getComputedStyle(modal).display === "none") {
+    const style = window.getComputedStyle(modal);
+    if (
+      !document.body.contains(modal) ||
+      modal.offsetWidth === 0 ||
+      style.display === "none" ||
+      style.visibility === "hidden" ||
+      style.opacity === "0"
+    ) {
       closed = true;
       break;
     }
@@ -694,8 +777,7 @@ function getCacheKey(): string {
 }
 
 function getSeasonedCacheKey(seasonKey?: string): string {
-  const resolvedSeasonKey = seasonKey ?? getCurrentSeasonKey();
-  if (!resolvedSeasonKey) { return ""; }
+  const resolvedSeasonKey = seasonKey || getCurrentSeasonKey() || "SEASON_CURRENT";
   return `${getCacheKey()}__${resolvedSeasonKey}`;
 }
 

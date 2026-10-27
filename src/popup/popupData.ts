@@ -234,8 +234,8 @@ export function loadMembers(state: PopupState, requestedSeasonKey?: string): voi
 
             if (normalized.length === 0) {
               const seasonLabel = res?.seasonText || state.activeSeasonText || "this season";
-              state.list.innerHTML = `<div class="empty">No records found for ${seasonLabel}. Please scrape first.</div>`;
-              PopupUtils.showToast(`No records found for ${seasonLabel}. Please scrape first.`);
+              state.list.innerHTML = `<div class="empty">No records found for ${seasonLabel}. Please scrape first at bottom screen shiftypad button.</div>`;
+              PopupUtils.showToast(`No records found for ${seasonLabel}. Please scrape first at bottom screen shiftypad button.`);
             }
 
             // Refresh the table (always updated)

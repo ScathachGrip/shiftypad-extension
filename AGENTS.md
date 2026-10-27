@@ -26,6 +26,22 @@ This repository contains a Chrome extension for Union Raid data scraping and pop
 - `scrapeUnionId()` → extracts numeric UID from `div.text-[color:var(--op-text-white)].text-[length:10px].mt-[2px].truncate.leading-[12px]`, strips `UID:` prefix.
 - `scrapeUnionAvatar()` → **READY TO CONSUME, NOT YET WIRED TO UI**. Extracts the union avatar image URL from `div.w-[66px].mr-[2px].flex-shrink-0 img`. Returns the full `src` URL string or empty string. Exported from `modifier.ts`, imported in `content.ts`.
 
+## Adaptive Scraper (Dual-Layout Architecture)
+Blablalink provides a layout switch button (`button[data-cname='pc-layout-switch']`) between **Modern Layout (Desktop)** and **Classic Layout (Mobile)**. The scraper is built to be **layout-agnostic**—it must NEVER force an auto-switch or reload between layouts.
+- **Modal Detection (`waitForModalAppear`)**:
+  - Mobile renders a bottom-sheet drawer (`div.absolute.bottom-0.w-full`).
+  - Desktop renders a centered 720px floating dialog (`div.box-border.max-h-[90vh].pointer-events-auto`).
+  - Always use the polymorphic selector:
+    `"div.box-border.max-h-\\[90vh\\], div.absolute.bottom-0.w-full, div.pointer-events-auto.max-h-\\[90vh\\]"`.
+- **Viewport-Aware Outside Click (`closeModal`)**:
+  - In Desktop (`window.innerWidth > 760`), click target is `(10, 10)` (top-left corner) to guarantee hitting the backdrop outside the centered 720px dialog.
+  - In Mobile (`window.innerWidth <= 760`), click target is `(window.innerWidth / 2, 20)` directly above the bottom drawer.
+  - The dismissal pipeline also dispatches synthetic `Escape` keyboard events and clicks backdrop/overlay elements with a 20-frame transition check.
+- **Card Container Flexibility (`extractRowsFromModal`)**:
+  - Card heights differ across layouts (`h-[117px]` on mobile vs `h-[150px]` on desktop). Always query `div.w-full.bg-[#f4f4f4]` without a strict height class constraint.
+  - Synchro level: must be captured via regex `match(/LV\.(\d+)/i)[1]` to prevent concatenating with adjacent combat power text.
+  - Squad members: queries `div[data-cname='raid-squad-avatar'], div.relative.mr-[5px]`. Hero tier formats: `LB 0-3`, `Core 1-7`, or `MAX`. Combat Power is extracted from `.squad-avatar__combat-value, .text-[var(--text-3)]`.
+
 ## Popup UI
 - Header displays union title as `{UNION_NAME} ({UID})` — no "Union:" prefix.
 - Season selector is a **custom Web3-style dropdown** (not a native `<select>`). The hidden `<select id="seasonSelect">` is kept as state backing; the visible UI uses `.custom-select` / `.select-trigger` / `.select-options` classes.
@@ -50,3 +66,5 @@ Run before finalizing:
 - If cache schema changes, update both content and popup read paths in the same patch.
 - `scrapeUnionAvatar()` is exported and imported but not yet consumed in the popup or response payload. Wire it when needed.
 - The custom season dropdown syncs with the hidden native `<select>` via `dispatchEvent(new Event("change"))`. Do not remove the hidden `<select>`.
+- **TypeScript 7 & ESLint**: The project runs on native `typescript@^7.0.2`. Because TS 7 native binary does not export a legacy JS AST API, `eslint.config.js` bridges ESLint internal AST queries via `@typescript/typescript6` while `tsc` runs the pure native TS 7.0.2 compiler. Do NOT remove this bridge or ESLint will crash.
+- **Astro Linting**: `.astro` files in `astro/` are linted by root ESLint using `eslint-plugin-astro` and `astro-eslint-parser`. `tsconfig.json` only includes extension TypeScript files (`src`, `tests`, `ci`) so `tsc --noEmit` won't conflict with `.astro` syntax.
