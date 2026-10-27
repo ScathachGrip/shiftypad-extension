@@ -1,6 +1,6 @@
 {
   "name": "shiftypad-extension",
-  "version": "0.1.10",
+  "version": "0.1.12",
   "description": "Blablalink extension with Union Raid data focused.",
   "apexcharts_browser": "https://cdn.jsdelivr.net/npm/apexcharts@5.3.6",
   "repository": {
@@ -14,16 +14,17 @@
     "download:apex": "bun ci/downloadApex.ts",
     "build": "bun ci/build.ts",
     "release": "bun ci/release.ts",
-    "chore:release": "bun ci/chore_release.ts",
     "lint": "tsc --noEmit && eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"ci/**/*.ts\" \"astro/**/*.astro\"",
     "lint:fix": "eslint \"src/**/*.ts\" \"tests/**/*.ts\" \"ci/**/*.ts\" \"astro/**/*.astro\" --fix",
     "qlty": "qlty check --all",
     "qlty:smells": "qlty smells --all",
     "qlty:zizmor": "qlty check --filter=zizmor:zizmor/template-injection --all",
+    "qlty:fresh": "bun run lint && bun run qlty && bun run qlty:zizmor && bun run qlty:smells",
     "blablalink:version": "bun ci/checkVersion.ts",
     "test:efficiency": "bun tests/efficiency-check.ts",
     "test": "bun test",
-    "test:coverage": "rm -rf coverage && bun test --coverage --coverage-reporter=lcov --coverage-reporter=text"
+    "test:coverage": "rm -rf coverage && bun test --coverage --coverage-reporter=lcov --coverage-reporter=text",
+    "chore:release": "bun ci/chore_release.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
