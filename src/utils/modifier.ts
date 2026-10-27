@@ -310,6 +310,10 @@ async function scrapeUnionRaidAllModals(
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     backdrop-filter: blur(4px);
   `;
+
+  const currentUnion = scrapeUnionName();
+  const initialText = currentUnion ? `Extracting ${currentUnion} data .. 0%` : "Extracting data .. 0%";
+
   spinner.innerHTML = `
     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <style>
@@ -330,7 +334,7 @@ async function scrapeUnionRaidAllModals(
         <line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line>
       </g>
     </svg>
-    <span id="shiftypad-scrape-text">Extracting data .. 0%</span>
+    <span id="shiftypad-scrape-text">${initialText}</span>
   `;
   document.body.appendChild(spinner);
 
@@ -349,12 +353,12 @@ async function scrapeUnionRaidAllModals(
       if (stopRequested) { break; }
 
       const progress = Math.round((i / buttons.length) * 100);
+      const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
       const textEl = document.getElementById("shiftypad-scrape-text");
       if (textEl) {
-        textEl.textContent = `Extracting data .. ${progress}%`;
+        const playerLabel = expectedPlayerName ? `${expectedPlayerName} (${i + 1}/${buttons.length})` : `${i + 1}/${buttons.length}`;
+        textEl.textContent = `Extracting ${playerLabel} .. ${progress}%`;
       }
-
-      const expectedPlayerName = buttons[i].closest("tr")?.querySelectorAll("td")[1]?.textContent?.trim() || "";
 
       console.log(`💥 Click ${i + 1}/${buttons.length} (Expected: ${expectedPlayerName})`);
       buttons[i].click();
