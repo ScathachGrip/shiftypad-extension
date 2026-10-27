@@ -146,7 +146,36 @@ global.Image = class {
   }
 };
 
+const resetTestEnvironment = () => {
+  listeners.length = 0;
+  global.__mockStorage = {};
+  if (typeof global.localStorage !== "undefined" && typeof global.localStorage.clear === "function") {
+    try {
+      global.localStorage.clear();
+    } catch {}
+  }
+  if (win.document && win.document.body) {
+    win.document.body.innerHTML = '<div id="root"></div><div id="app"></div><div id="toastContainer"></div><div id="chartDummy"></div><div id="chartAvgDummy"></div><div id="chartAvgDamageDummy"></div><div id="chartTopDrawerDummy"></div><div id="chartBossContainer"></div>';
+  }
+  try {
+    dom.reconfigure({ url: "https://www.blablalink.com/shiftyspad/union-raid" });
+    global.location = win.location;
+    if (global.window) {
+      global.window.location = win.location;
+    }
+  } catch {}
+};
+
+(global as any).resetTestEnvironment = resetTestEnvironment;
+
 (global as any).updateTestUrl = (url: string) => {
   dom.reconfigure({ url });
   global.location = win.location;
+  if (global.window) {
+    global.window.location = win.location;
+  }
+};
+
+module.exports = {
+  resetTestEnvironment,
 };

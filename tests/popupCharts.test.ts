@@ -108,10 +108,86 @@ describe("Chart Rendering Logic", () => {
     chrome.storage.local.get = originalGet;
   });
 
-  test("refreshVisibleCharts should update existing charts", () => {
+  test("refreshVisibleCharts should update existing charts across containers", () => {
+    // 1. chartContainer
     mockState.chartContainer.style.display = "block";
     PopupCharts.refreshVisibleCharts(mockState);
     expect(mockState.apexChart).not.toBeNull();
+    mockState.chartContainer.style.display = "none";
+
+    // 2. chartBossContainer
+    mockState.chartBossContainer.style.display = "block";
+    PopupCharts.refreshVisibleCharts(mockState);
+    mockState.chartBossContainer.style.display = "none";
+
+    // 3. chartAvgContainer
+    mockState.chartAvgContainer.style.display = "block";
+    PopupCharts.refreshVisibleCharts(mockState);
+    expect(mockState.apexChartAvg).not.toBeNull();
+    mockState.chartAvgContainer.style.display = "none";
+
+    // 4. chartAvgDamageContainer
+    mockState.chartAvgDamageContainer.style.display = "block";
+    PopupCharts.refreshVisibleCharts(mockState);
+    expect(mockState.apexChartAvgDamage).not.toBeNull();
+    mockState.chartAvgDamageContainer.style.display = "none";
+
+    // 5. chartTopDrawerContainer
+    mockState.chartTopDrawerContainer.style.display = "block";
+    PopupCharts.refreshVisibleCharts(mockState);
+    mockState.chartTopDrawerContainer.style.display = "none";
+  });
+
+  test("renderLimitBreaksCpChart should render CP chart", async () => {
+    const mockData: any = [
+      {
+        player: "Player 1",
+        synchro: 250,
+        rows: [
+          {
+            heroes: [
+              { avatarUrl: "https://example.com/h1.png", combatPower: "100,000", finalTier: "MAX" },
+              { avatarUrl: "https://example.com/h2.png", combatPower: "50,000", finalTier: "Core 2" }
+            ]
+          }
+        ]
+      }
+    ];
+
+    await PopupCharts.renderLimitBreaksCpChart(mockState, mockData);
+    expect(mockState.apexChartLimitBreaksCp).not.toBeNull();
+  });
+
+  test("renderLimitBreaksSynchroChart should render Synchro chart", async () => {
+    const mockData: any = [
+      { player: "Player 1", synchro: 250 },
+      { player: "Player 2", synchro: 220 }
+    ];
+
+    await PopupCharts.renderLimitBreaksSynchroChart(mockState, mockData);
+    expect(mockState.apexChartLimitBreaksSynchro).not.toBeNull();
+  });
+
+  test("renderLimitBreaksWhaleChart should render Whale chart", async () => {
+    const mockData: any = [
+      {
+        player: "Player 1",
+        synchro: 250,
+        rows: [
+          {
+            heroes: [
+              { avatarUrl: "https://example.com/h1.png", finalTier: "MAX" },
+              { avatarUrl: "https://example.com/h2.png", finalTier: "Core 4" },
+              { avatarUrl: "https://example.com/h3.png", finalTier: "LB 3" },
+              { avatarUrl: "https://example.com/h4.png", finalTier: "None", limitBreak: 1 }
+            ]
+          }
+        ]
+      }
+    ];
+
+    await PopupCharts.renderLimitBreaksWhaleChart(mockState, mockData);
+    expect(mockState.apexChartLimitBreaksWhale).not.toBeNull();
   });
 
   test("downloadSummaryChartPng should trigger download link click", async () => {

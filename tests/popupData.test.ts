@@ -9,6 +9,7 @@ describe("Popup Data Logic", () => {
   let mockState: PopupState;
 
   beforeEach(() => {
+    (globalThis as any).resetTestEnvironment?.();
     // Build full DOM structure needed by loadMembers
     const seasonSelect = document.createElement("select");
     seasonSelect.id = "seasonSelect";
@@ -147,9 +148,9 @@ describe("Popup Data Logic", () => {
   });
 
   test("loadMembers should show empty state when no records found", async () => {
-    spyOn((globalThis as any).chrome.tabs, "query").mockImplementation((_q: unknown, cb: (tabs: {id: number; url: string}[]) => void) => cb([{ id: 1, url: "https://www.blablalink.com/shiftyspad/union-raid" }]));
-    spyOn((globalThis as any).chrome.storage.local, "get").mockImplementation((_keys: unknown, cb: (r: Record<string, unknown>) => void) => cb({}));
-    spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb?: (r: unknown) => void) => {
+    const qSpy = spyOn((globalThis as any).chrome.tabs, "query").mockImplementation((_q: unknown, cb: (tabs: {id: number; url: string}[]) => void) => cb([{ id: 1, url: "https://www.blablalink.com/shiftyspad/union-raid" }]));
+    const sSpy = spyOn((globalThis as any).chrome.storage.local, "get").mockImplementation((_keys: unknown, cb: (r: Record<string, unknown>) => void) => cb({}));
+    const sendSpy = spyOn((globalThis as any).chrome.tabs, "sendMessage").mockImplementation((_id: unknown, msg: unknown, cb?: (r: unknown) => void) => {
       const m = msg as { type: string };
       if (typeof cb === "function") {
         if (m.type === "GET_ACTIVE_SEASON") { cb({ seasonKey: "S21" }); }
@@ -162,6 +163,10 @@ describe("Popup Data Logic", () => {
     
     // Adjusting to expect current source behavior where message might be empty due to rendering logic
     expect(mockState.list.innerHTML).toBeDefined();
+
+    qSpy.mockRestore();
+    sSpy.mockRestore();
+    sendSpy.mockRestore();
   });
 
   test("setButtonsEnabled should toggle classes on buttons", () => {
