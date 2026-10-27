@@ -7,7 +7,7 @@
 	<a href="https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension"><img src="https://qlty.sh/gh/ScathachGrip/projects/shiftypad-extension/maintainability.svg" alt="Maintainability" /></a>
 </p>
 
-Union Raid data, right where you need it — Pull Union Raid data with ease. Powered by deterministic season-aware caching and one-click multi-format exports (JSON, CSV, and high-res PNG charts), your union-raid performance is brought to life with clarity and precision.
+Union Raid data, right where you need it — Pull Union Raid data with ease. Powered by deterministic season-aware caching and one-click multi-format exports (JSON, CSV, and Interactive charts)
 
 <a href="https://shiftypad.scathach.id/">Installation</a> •
 <a href="https://github.com/ScathachGrip/shiftypad-extension/blob/master/CONTRIBUTING.md">Contributing</a> •
